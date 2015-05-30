@@ -1,3 +1,4 @@
+import glob
 import fbpy.fb as fb
 import gcodeparser.gcodeparser as gcode
 import mill.interface as interface
@@ -121,6 +122,8 @@ class Myinterface(interface.Interface):
         pass
 
     def dowhateverSis(self, mode):
+        if (self.sim.geometries is None):
+            return
         self.sim.draw()
         self.sim.sim(mode)
 
@@ -142,14 +145,15 @@ class Myinterface(interface.Interface):
         self.screen.refresh()
 
     def loadfile(self):
-        self.parser.filename = "spacer.ngc"
+        files=glob.glob("/dev/shm/cnc/*.ngc")
+        self.parser.filename = files[0]
         self.parser.parse()
         self.sim.geometries = self.parser.geometries
         self.sim.draw()
 
 if __name__ == '__main__':
 
-    machineinterface =Myinterface()
+    machineinterface = Myinterface()
     
     machineinterface.main()
     machineinterface.loop()
