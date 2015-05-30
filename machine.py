@@ -1,6 +1,24 @@
 import fbpy.fb as fb
 import gcodeparser.gcodeparser as gcode
 import mill.interface as interface
+try:
+    import pololu.pololu as pololu
+    POLOLU_AVAILABLE = True
+except ImportError:
+    print "WARNING, NO HARDWARE SUPPORT, ONLY SIMULATION. press enter to continue"
+    s=raw_input()
+    POLOLU_AVAILABLE = False
+
+class Dummypololu(object):
+
+    def __init__(self):
+        pass
+
+    def stepsleft(self,x):
+        pass
+
+    def stepsright(self,y):
+        pass
 
 class Mysim(gcode.Simulator):
 
@@ -9,6 +27,14 @@ class Mysim(gcode.Simulator):
         self.X=0
         self.Y=0
         gcode.Simulator.__init__(self, surf)
+        if (POLOLU_AVAILABLE):
+            self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
+            self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
+            self.ydriver.speed=60
+            self.xdriver.speed=60
+        else:
+            self.ydriver = Dummypololu()
+            self.xdriver = Dummypololu()
 
     def raisedrill(self):
         self.surf.pixelstyle.color = self.color1
@@ -28,13 +54,36 @@ class Mysim(gcode.Simulator):
         #self.interfaceself.drillmovemessage("move x")
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
+        if (dx>0):
+            self.xdriver.stepsright(1)
+        if (dx<0):
+            self.xdriver.stepsleft(1)
 
     def movey(self, dy):
         #self.interfaceself.drillmovemessage("move y")
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
+        if (dy>0):
+            self.ydriver.stepsright(1)
+        if (dy<0):
+            self.ydriver.stepsleft(1)
 
 class Myinterface(interface.Interface):
+    LEFTCOLUMN = 10
+
+    menudata =  [
+                    [10, LEFTCOLUMN, "MENU"],
+                    [11, LEFTCOLUMN, "===="],
+                    [12, LEFTCOLUMN, "q)      quit"],
+                    [13, LEFTCOLUMN, "c)      start milling"],
+                    [14, LEFTCOLUMN, "s)      simulate"],
+                    [15, LEFTCOLUMN, "o)      set origin"],
+                    [16, LEFTCOLUMN, "l)      load file"],
+                    [17, LEFTCOLUMN, "<space> pause/play"],
+                    [18, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
+                    [19, LEFTCOLUMN, "more stuff..."]
+                ]
+
 
     def __init__(self):
         self.surface = fb.Surface()
