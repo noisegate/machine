@@ -76,13 +76,15 @@ class Myinterface(interface.Interface):
                     [10, LEFTCOLUMN, "MENU"],
                     [11, LEFTCOLUMN, "===="],
                     [12, LEFTCOLUMN, "q)      quit"],
-                    [13, LEFTCOLUMN, "c)      start milling"],
-                    [14, LEFTCOLUMN, "s)      simulate"],
+                    [13, LEFTCOLUMN, "C)      start milling"],
+                    [14, LEFTCOLUMN, "S)      simulate"],
                     [15, LEFTCOLUMN, "o)      set origin"],
                     [16, LEFTCOLUMN, "l)      load file"],
                     [17, LEFTCOLUMN, "<space> pause/play"],
                     [18, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
-                    [19, LEFTCOLUMN, "more stuff..."]
+                    [19, LEFTCOLUMN, "a,w,s,z move graph"],
+                    [20, LEFTCOLUMN, "+, -, zoom graph"],
+                    [21, LEFTCOLUMN, "more stuff..."]
                 ]
 
 
@@ -99,6 +101,9 @@ class Myinterface(interface.Interface):
             c=self.screen.getch()
             if (c==ord(' ')): 
                 go=0
+            if (c==ord('q')):
+                return -1
+        return 0
 
     def ifpause(self):
         c=self.screen.getch()
@@ -126,6 +131,27 @@ class Myinterface(interface.Interface):
             return
         self.sim.draw()
         self.sim.sim(mode)
+
+    def generichandler(self, arg):
+
+        if (arg=='+'):
+            self.sim.zoom +=0.01
+            self.sim.draw()
+        if (arg=='-'):
+            self.sim.zoom -=0.01
+            self.sim.draw()
+        if (arg=='w'):
+            self.sim.offsety +=0.01
+            self.sim.draw()
+        if (arg=='z'):
+            self.sim.offsety -=0.01
+            self.sim.draw()
+        if (arg=='a'):
+            self.sim.offsetx -=0.01
+            self.sim.draw()
+        if (arg=='s'):
+            self.sim.offsetx +=0.01
+            self.sim.draw()
 
     def resetorigin(self):
         self.sim.X = 0
