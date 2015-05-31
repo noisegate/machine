@@ -10,5 +10,16 @@ of the gcode execution as to make debugging easy ;) and a keyboard
 for editing parameters (hysteresis, steps per mm and so forth)
 
 work in progress...
+## dependencies
+download and install the following packages:
 
+> git clone https://github.com/noisegate/machine.git
+
+> git clone https://github.com/noisegate/fbpy.git
+
+> git clone https://github.com/noisegate/gcodeparser.git
+
+> git clone https://github.com/noisegate/pololu.git
+
+> git clone https://github.com/noisegate/mill.git
 
