@@ -193,7 +193,7 @@ class Myinterface(interface.Interface):
         text = tb.edit()
         curses.beep()
         #ofzoo....
-        self.sim.stepspermmX = int(text.encode('utf_8')))
+        self.sim.stepspermmX = int(text.encode('utf_8'))
                 
     def handlerestkeypresses(self,c):
         if (c==ord('c')):
