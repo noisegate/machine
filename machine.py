@@ -27,6 +27,9 @@ class Mysim(gcode.Simulator):
         self.interfaceself = interfaceself
         self.X=0
         self.Y=0
+        self.stepspermmX = 10
+        self.stepspermmY = 10
+
         gcode.Simulator.__init__(self, surf)
         if (POLOLU_AVAILABLE):
             self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
@@ -56,18 +59,18 @@ class Mysim(gcode.Simulator):
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
-            self.xdriver.stepsright(1)
+            self.xdriver.stepsright(self.stepspermmX)
         if (dx<0):
-            self.xdriver.stepsleft(1)
+            self.xdriver.stepsleft(self.stepspermmX)
 
     def movey(self, dy):
         #self.interfaceself.drillmovemessage("move y")
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
-            self.ydriver.stepsright(1)
+            self.ydriver.stepsright(self.stepspermmY)
         if (dy<0):
-            self.ydriver.stepsleft(1)
+            self.ydriver.stepsleft(self.stepspermmY)
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
