@@ -1,7 +1,11 @@
 import glob
 import fbpy.fb as fb
+import time
 import gcodeparser.gcodeparser as gcode
 import mill.interface as interface
+import curses
+import curses.textpad
+
 try:
     import pololu.pololu as pololu
     POLOLU_AVAILABLE = True
@@ -83,11 +87,12 @@ class Myinterface(interface.Interface):
                     [14, LEFTCOLUMN, "S)      simulate"],
                     [15, LEFTCOLUMN, "o)      set origin"],
                     [16, LEFTCOLUMN, "l)      load file"],
-                    [17, LEFTCOLUMN, "<space> pause/play"],
-                    [18, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
-                    [19, LEFTCOLUMN, "a,w,s,z move graph"],
-                    [20, LEFTCOLUMN, "+, -, zoom graph"],
-                    [21, LEFTCOLUMN, "more stuff..."]
+                    [17, LEFTCOLUMN, "c)      calibrate"],
+                    [18, LEFTCOLUMN, "<space> pause/play"],
+                    [19, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
+                    [20, LEFTCOLUMN, "a,w,s,z move graph"],
+                    [21, LEFTCOLUMN, "+, -, zoom graph"],
+                    [22, LEFTCOLUMN, "more stuff..."]
                 ]
 
 
@@ -179,6 +184,24 @@ class Myinterface(interface.Interface):
         self.parser.parse()
         self.sim.geometries = self.parser.geometries
         self.sim.draw()
+
+    def calibrate(self):
+        #work in progress...
+        self.screen.keypad(1)
+        win = curses.newwin(5, 60, 5, 10)
+        tb = curses.textpad.Textbox(win)
+        text = tb.edit()
+        curses.beep()
+        #ofzoo....
+        self.sim.stepspermmX = return int(text.encode('utf_8')))
+                
+    def handlerestkeypresses(self,c):
+        if (c==ord('c')):
+            #calibrate
+            self.calibrate()
+        elif(c==ord('h')):
+            #hysteresis settings
+            pass
 
 if __name__ == '__main__':
 
