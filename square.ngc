@@ -1,0 +1,55 @@
+;PYCAM-META-DATA: Filename: /home/marcell/Dropbox/3dtest/milltests/square.dxf
+;PYCAM-META-DATA: Timestamp: 2015-06-01 17:25:40.389559
+;PYCAM-META-DATA: Version: 0.5.1
+;Estimated machine time: 1 minutes
+G40 (disable tool radius compensation)
+G49 (disable tool length compensation)
+G80 (cancel modal motion)
+G54 (select coordinate system 1)
+G90 (disable incremental moves)
+G21 (metric)
+G61 (exact path mode)
+F200.00000
+S1000.00000
+;PYCAM_TOOLPATH_SETTINGS: START
+;[Bounds]
+;maxz = 0.0
+;maxx = 33.7
+;maxy = 33.7
+;minx = -3.7
+;miny = -3.7
+;minz = 0.0
+;
+;[Tool]
+;torus_radius = 0.25
+;speed = 1000.0
+;shape = SphericalCutter
+;tool_radius = 0.5
+;feedrate = 200.0
+;
+;[Process]
+;engrave_offset = 1.0
+;step_down = 1.0
+;generator = EngraveCutter
+;postprocessor = SimpleCutter
+;milling_style = conventional
+;material_allowance = 0.0
+;pocketing_type = none
+;path_direction = x
+;
+;PYCAM_TOOLPATH_SETTINGS: END
+T3 M6
+G0 Z25.0000
+M3 (start spindle)
+G04 P3 (wait for 3 seconds)
+ X-1.0000 Y-1.0000
+G1 Z0.0000
+ X31.0000
+ Y31.0000
+ X-1.0000
+ Y-1.0000
+G0 Z25.0000
+M5 (stop spindle)
+G04 P3 (wait for 3 seconds)
+G0 Z25.0000
+M2 (end program)
