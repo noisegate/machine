@@ -1,2 +1,2 @@
 mkdir /dev/shm/cnc
-cp spacer.ngc /dev/shm/cnc
+cp m.ngc /dev/shm/cnc
