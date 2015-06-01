@@ -74,9 +74,9 @@ class Mysim(gcode.Simulator):
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
-            self.ydriver.stepsright(self.stepspermmY*dy)
+            self.ydriver.stepsleft(self.stepspermmY*dy)
         if (dy<0):
-            self.ydriver.stepsleft(self.stepspermmY*-dy)
+            self.ydriver.stepsright(self.stepspermmY*-dy)
         time.sleep(0.001)
 
 
@@ -129,14 +129,14 @@ class Myinterface(interface.Interface):
         self.sim.movex(-10)       
 
     def decrementy(self):
-        self.sim.movey(-10)
+        self.sim.movey(10)
 
     def incrementx(self):
         #print "move x"
         self.sim.movex(10)
 
     def incrementy(self):
-        self.sim.movey(10)
+        self.sim.movey(-10)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
