@@ -5,6 +5,7 @@ import gcodeparser.gcodeparser as gcode
 import mill.interface as interface
 import curses
 import curses.textpad
+import os
 
 try:
     import pololu.pololu as pololu
@@ -95,7 +96,7 @@ class Myinterface(interface.Interface):
                     [19, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
                     [20, LEFTCOLUMN, "a,w,s,z move graph"],
                     [21, LEFTCOLUMN, "+, -, zoom graph"],
-                    [22, LEFTCOLUMN, "more stuff..."]
+                    [22, LEFTCOLUMN, "Q) quit closing machine"]
                 ]
 
 
@@ -163,6 +164,8 @@ class Myinterface(interface.Interface):
         if (arg=='s'):
             self.sim.offsetx +=0.01
             self.sim.draw()
+        if (arg=='Q'):
+            os.system('sudo shutdown -h now')
 
     def resetorigin(self):
         self.sim.X = 0
