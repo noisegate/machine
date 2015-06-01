@@ -166,33 +166,33 @@ class Myinterface(interface.Interface):
 
     def generichandler(self, arg):
 
-        if (arg=='+'):
+        if (arg==ord('+')):
             self.sim.zoom +=0.01
             self.sim.draw()
-        if (arg=='-'):
+        if (arg==ord('-')):
             self.sim.zoom -=0.01
             self.sim.draw()
-        if (arg=='w'):
+        if (arg==ord('w')):
             self.sim.offsety +=0.01
             self.sim.draw()
-        if (arg=='z'):
+        if (arg==ord('z')):
             self.sim.offsety -=0.01
             self.sim.draw()
-        if (arg=='a'):
+        if (arg==ord('a')):
             self.sim.offsetx -=0.01
             self.sim.draw()
-        if (arg=='s'):
+        if (arg==ord('s')):
             self.sim.offsetx +=0.01
             self.sim.draw()
-        if (arg=='e'):
+        if (arg==ord('e')):
             self.screen.addstr(3,3,"ena")
             self.screen.refresh()
             self.sim.xdriver.enable()
             self.sim.ydriver.enable()
-        if (arg=='d'):
+        if (arg==ord('d')):
             self.sim.xdriver.disable()
             self.sim.ydriver.disable()
-        if (arg=='Q'):
+        if (arg==ord('Q')):
             os.system('sudo shutdown -h now')
 
     def resetorigin(self):
