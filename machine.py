@@ -38,8 +38,8 @@ class Mysim(gcode.Simulator):
         if (POLOLU_AVAILABLE):
             self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
-            self.ydriver.speed=120
-            self.xdriver.speed=120
+            self.ydriver.speed=220
+            self.xdriver.speed=220
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -66,7 +66,7 @@ class Mysim(gcode.Simulator):
             self.xdriver.stepsright(self.stepspermmX*dx)
         if (dx<0):
             self.xdriver.stepsleft(self.stepspermmX*-dx)
-        time.sleep(0.01)
+        time.sleep(0.001)
 
     def movey(self, dy):
         #self.interfaceself.drillmovemessage("move y")
@@ -76,7 +76,7 @@ class Mysim(gcode.Simulator):
             self.ydriver.stepsright(self.stepspermmY*dy)
         if (dy<0):
             self.ydriver.stepsleft(self.stepspermmY*-dy)
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 
 class Myinterface(interface.Interface):
