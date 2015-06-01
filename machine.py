@@ -34,11 +34,17 @@ class Mysim(gcode.Simulator):
         self.Y=0
         self.stepspermmX = 2
         self.stepspermmY = 2
-
+        self.lastx=0
+        self.lasty=0
+        self.hystx=2
+        self.hysty=2
         gcode.Simulator.__init__(self, surf)
+
         if (POLOLU_AVAILABLE):
             self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
+            self.xdriver.disable()
+            self.ydriver.disable()
             self.ydriver.speed=220
             self.xdriver.speed=220
         else:
@@ -64,20 +70,32 @@ class Mysim(gcode.Simulator):
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
+            if (self.lastx == -1):
+                self.xdriver.stepsright(self.stepspermmX*self.hystx)
             self.xdriver.stepsright(self.stepspermmX*dx)
-        if (dx<0):
+            self.lastx=1    
+        if(dx<0):
+            if (self.lastx == 1):
+                self.xdriver.stepsleft(self.stepspermmX*self.hystx)
             self.xdriver.stepsleft(self.stepspermmX*-dx)
-        time.sleep(0.001)
+            self.lastx=-1
+        time.sleep(0.02)
 
     def movey(self, dy):
         #self.interfaceself.drillmovemessage("move y")
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
+            if (self.lasty == -1):
+                self.ydriver.stepsleft(self.stepspermmY*self.hysty)
             self.ydriver.stepsleft(self.stepspermmY*dy)
+            self.lasty=1
         if (dy<0):
+            if (self.lasty == 1):
+                self.ydriver.stepsright(self.stepspermmY*self.hysty)
             self.ydriver.stepsright(self.stepspermmY*-dy)
-        time.sleep(0.001)
+            self.lasty=-1
+        time.sleep(0.02)
 
 
 class Myinterface(interface.Interface):
@@ -96,7 +114,9 @@ class Myinterface(interface.Interface):
                     [19, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
                     [20, LEFTCOLUMN, "a,w,s,z move graph"],
                     [21, LEFTCOLUMN, "+, -, zoom graph"],
-                    [22, LEFTCOLUMN, "Q) quit closing machine"]
+                    [22, LEFTCOLUMN, "Q) quit closing machine"],
+                    [23, LEFTCOLUMN, "e) enable"],
+                    [24, LEFTCOLUMN, "d) disable"]
                 ]
 
 
@@ -126,17 +146,17 @@ class Myinterface(interface.Interface):
         pass
 
     def decrementx(self):
-        self.sim.movex(-10)       
+        self.sim.movex(-20)       
 
     def decrementy(self):
-        self.sim.movey(10)
+        self.sim.movey(20)
 
     def incrementx(self):
         #print "move x"
-        self.sim.movex(10)
+        self.sim.movex(20)
 
     def incrementy(self):
-        self.sim.movey(-10)
+        self.sim.movey(-20)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
@@ -164,6 +184,14 @@ class Myinterface(interface.Interface):
         if (arg=='s'):
             self.sim.offsetx +=0.01
             self.sim.draw()
+        if (arg=='e'):
+            self.screen.addstr(3,3,"ena")
+            self.screen.refresh()
+            self.sim.xdriver.enable()
+            self.sim.ydriver.enable()
+        if (arg=='d'):
+            self.sim.xdriver.disable()
+            self.sim.ydriver.disable()
         if (arg=='Q'):
             os.system('sudo shutdown -h now')
 
