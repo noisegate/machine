@@ -47,6 +47,8 @@ class Mysim(gcode.Simulator):
         params.getdata()
         self.stepspermmX = params.stepspermmx
         self.stepspermmY = params.stepspermmy  
+        self.sleepx = params.speedx
+        self.sleepy = params.speedy
         self.lastx=0
         self.lasty=0
         self.hystx=params.hysteresisx 
@@ -106,7 +108,7 @@ class Mysim(gcode.Simulator):
             if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
             self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        #time.sleep(0.02)
+        time.sleep(self.sleepx)
 
     def movey(self, dy, y, mode):
         #self.interfaceself.drillmovemessage("move y")
@@ -131,7 +133,7 @@ class Mysim(gcode.Simulator):
             if (self.aanslagy<0): self.simydriver.stepsright(-dy)
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        #time.sleep(0.02)
+        time.sleep(self.sleepy)
 
 
 class Myinterface(interface.Interface):
@@ -181,17 +183,17 @@ class Myinterface(interface.Interface):
     def resetorigin(self):
         pass
 
-    def decrementx(self):
-        self.sim.movex(-60,0, 1)       
+    def decrementx(self, n):
+        self.sim.movex(-n,0, 1)       
 
-    def decrementy(self):
-        self.sim.movey(60,0 ,1)
+    def decrementy(self,n):
+        self.sim.movey(n,0 ,1)
 
-    def incrementx(self):
-        self.sim.movex(60, 0, 1)
+    def incrementx(self,n):
+        self.sim.movex(n, 0, 1)
 
-    def incrementy(self):
-        self.sim.movey(-60,0, 1)
+    def incrementy(self,n):
+        self.sim.movey(-n,0, 1)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
@@ -227,6 +229,23 @@ class Myinterface(interface.Interface):
         if (arg==ord('d')):
             self.sim.xdriver.disable()
             self.sim.ydriver.disable()
+        if (arg==ord('i')):
+            self.decrementy(10)
+        if (arg==ord('m')):
+            self.incrementy(10)
+        if (arg==ord('j')):
+            self.decrementx(10)
+        if (arg==ord('k')):
+            self.incrementx(10)
+        if (arg==ord('I')):
+            self.decrementy(100)
+        if (arg==ord('M')):
+            self.incrementy(100)
+        if (arg==ord('J')):
+            self.decrementx(100)
+        if (arg==ord('K')):
+            self.incrementx(100)
+
         if (arg==ord('Q')):
             os.system('sudo shutdown -h now')
 
