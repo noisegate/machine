@@ -6,7 +6,7 @@ import mill.interface as interface
 import curses
 import curses.textpad
 import os
-
+import data
 try:
     import pololu.pololu as pololu
     POLOLU_AVAILABLE = True
@@ -43,16 +43,18 @@ class Mysim(gcode.Simulator):
         self.interfaceself = interfaceself
         self.X=0
         self.Y=0
-        self.stepspermmX = 2
-        self.stepspermmY = 2
+        params = data.Calibrate()
+        params.getdata()
+        self.stepspermmX = params.stepspermmx
+        self.stepspermmY = params.stepspermmy  
         self.lastx=0
         self.lasty=0
-        self.hystx=0
-        self.hysty=50
+        self.hystx=params.hysteresisx 
+        self.hysty=params.hysteresisy 
         gcode.Simulator.__init__(self, surf)
         self.aanslagy=0
         self.aanslagx=0
-
+        
         if (POLOLU_AVAILABLE):
             self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
