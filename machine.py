@@ -180,17 +180,16 @@ class Myinterface(interface.Interface):
         pass
 
     def decrementx(self):
-        self.sim.movex(-20)       
+        self.sim.movex(-60,0, 1)       
 
     def decrementy(self):
-        self.sim.movey(20)
+        self.sim.movey(60,0 ,1)
 
     def incrementx(self):
-        #print "move x"
-        self.sim.movex(20)
+        self.sim.movex(60, 0, 1)
 
     def incrementy(self):
-        self.sim.movey(-20)
+        self.sim.movey(-60,0, 1)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
