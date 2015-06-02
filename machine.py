@@ -26,6 +26,17 @@ class Dummypololu(object):
     def stepsright(self,y):
         pass
 
+class Simpololu(object):
+
+    def __init__(self):
+        self.X = 0.0
+
+    def stepsleft(self, x):
+        self.X -=x        
+
+    def stepsright(self,x):
+        self.X +=x
+
 class Mysim(gcode.Simulator):
 
     def __init__(self, surf, interfaceself):
@@ -36,9 +47,11 @@ class Mysim(gcode.Simulator):
         self.stepspermmY = 2
         self.lastx=0
         self.lasty=0
-        self.hystx=2
-        self.hysty=2
+        self.hystx=0
+        self.hysty=50
         gcode.Simulator.__init__(self, surf)
+        self.aanslagy=0
+        self.aanslagx=0
 
         if (POLOLU_AVAILABLE):
             self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
@@ -50,6 +63,8 @@ class Mysim(gcode.Simulator):
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
+        self.simxdriver = Simpololu()
+        self.simydriver = Simpololu()
 
     def raisedrill(self):
         self.surf.pixelstyle.color = self.color1
@@ -65,37 +80,56 @@ class Mysim(gcode.Simulator):
     def pause(self):
         self.interfaceself.ifpause()
 
-    def movex(self, dx):
+    def movex(self, dx, x, mode):
         #self.interfaceself.drillmovemessage("move x")
+        
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
             if (self.lastx == -1):
-                self.xdriver.stepsright(self.stepspermmX*self.hystx)
-            self.xdriver.stepsright(self.stepspermmX*dx)
+                if (mode==1): self.xdriver.stepsright(self.stepspermmX*self.hystx)
+                self.simxdriver.stepsleft(self.hystx)
+                self.aanslagx = 0
+            if (mode==1): self.xdriver.stepsright(self.stepspermmX*dx)
+            self.aanslagx-=dx
+            if (self.aanslagx<0): self.simxdriver.stepsright(dx)
             self.lastx=1    
         if(dx<0):
             if (self.lastx == 1):
-                self.xdriver.stepsleft(self.stepspermmX*self.hystx)
-            self.xdriver.stepsleft(self.stepspermmX*-dx)
+                if (mode==1): self.xdriver.stepsleft(self.stepspermmX*self.hystx)
+                self.simxdriver.stepsright(self.hystx)
+                self.aanslagx= 0
+            if (mode==1): self.xdriver.stepsleft(self.stepspermmX*-dx)
+            self.aanslagx+=dx
+            if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
             self.lastx=-1
-        time.sleep(0.02)
+        if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
+        #time.sleep(0.02)
 
-    def movey(self, dy):
+    def movey(self, dy, y, mode):
         #self.interfaceself.drillmovemessage("move y")
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
             if (self.lasty == -1):
-                self.ydriver.stepsleft(self.stepspermmY*self.hysty)
-            self.ydriver.stepsleft(self.stepspermmY*dy)
+                if (mode==1): self.ydriver.stepsleft(self.stepspermmY*self.hysty)
+                #self.simydriver.stepsright(self.hysty)
+                self.aanslagy=0
+            if (mode==1): self.ydriver.stepsleft(self.stepspermmY*dy)
+            self.aanslagy-=dy
+            if (self.aanslagy<0): self.simydriver.stepsleft(dy)
             self.lasty=1
         if (dy<0):
             if (self.lasty == 1):
-                self.ydriver.stepsright(self.stepspermmY*self.hysty)
-            self.ydriver.stepsright(self.stepspermmY*-dy)
+                if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
+                #self.simydriver.stepsleft(self.hysty)
+                self.aanslagy=50
+            if (mode==1): self.ydriver.stepsright(self.stepspermmY*-dy)
+            self.aanslagy+=dy
+            if (self.aanslagy<0): self.simydriver.stepsright(-dy)
             self.lasty=-1
-        time.sleep(0.02)
+        if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
+        #time.sleep(0.02)
 
 
 class Myinterface(interface.Interface):
