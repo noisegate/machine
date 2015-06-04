@@ -20,6 +20,12 @@ class Dummypololu(object):
     def __init__(self):
         pass
 
+    def enable(self):
+        pass
+
+    def disable(self):
+        pass
+
     def stepsleft(self,x):
         pass
 
@@ -62,8 +68,8 @@ class Mysim(gcode.Simulator):
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
             self.xdriver.disable()
             self.ydriver.disable()
-            self.ydriver.speed=220
-            self.xdriver.speed=220
+            self.ydriver.speed=260
+            self.xdriver.speed=260
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -86,7 +92,7 @@ class Mysim(gcode.Simulator):
 
     def movex(self, dx, x, mode):
         #self.interfaceself.drillmovemessage("move x")
-        
+        self.xdriver.enable() 
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
@@ -109,9 +115,12 @@ class Mysim(gcode.Simulator):
             self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         time.sleep(self.sleepx)
+        self.xdriver.disable()
+        
 
     def movey(self, dy, y, mode):
         #self.interfaceself.drillmovemessage("move y")
+        self.ydriver.enable()
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
@@ -134,6 +143,7 @@ class Mysim(gcode.Simulator):
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         time.sleep(self.sleepy)
+        self.ydriver.disable()
 
 
 class Myinterface(interface.Interface):
