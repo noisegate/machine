@@ -93,6 +93,7 @@ class Mysim(gcode.Simulator):
     def movex(self, dx, x, mode):
         #self.interfaceself.drillmovemessage("move x")
         self.xdriver.enable() 
+        time.sleep(0.01)
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
@@ -114,13 +115,14 @@ class Mysim(gcode.Simulator):
             if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
             self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        time.sleep(self.sleepx)
         self.xdriver.disable()
+        time.sleep(self.sleepx)
         
 
     def movey(self, dy, y, mode):
         #self.interfaceself.drillmovemessage("move y")
         self.ydriver.enable()
+        time.sleep(0.01)
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
@@ -142,8 +144,8 @@ class Mysim(gcode.Simulator):
             if (self.aanslagy<0): self.simydriver.stepsright(-dy)
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        time.sleep(self.sleepy)
         self.ydriver.disable()
+        time.sleep(self.sleepy)
 
 
 class Myinterface(interface.Interface):
@@ -189,6 +191,7 @@ class Myinterface(interface.Interface):
         c=self.screen.getch()
         if (c==ord(' ')): 
             self.drillmessage("paused, space to continue")
+        self.generichandler(c)
 
     def resetorigin(self):
         pass
@@ -240,13 +243,19 @@ class Myinterface(interface.Interface):
             self.sim.xdriver.disable()
             self.sim.ydriver.disable()
         if (arg==ord('i')):
-            self.decrementy(10)
+            self.decrementy(5)
         if (arg==ord('m')):
-            self.incrementy(10)
+            self.incrementy(5)
         if (arg==ord('j')):
-            self.decrementx(10)
+            self.decrementx(5)
         if (arg==ord('k')):
-            self.incrementx(10)
+            self.incrementx(5)
+        if (arg==ord('f')):
+            self.sim.sleepx +=0.1
+            self.sim.sleepy +=0.1
+        if (arg==ord('F')):
+            self.sim.sleepx -=0.1
+            self.sim.sleepy -=0.1
         if (arg==ord('I')):
             self.decrementy(100)
         if (arg==ord('M')):
