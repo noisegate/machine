@@ -88,7 +88,11 @@ class Mysim(gcode.Simulator):
         self.interfaceself.drillmessage("Simulation finished, press space to continue") 
 
     def pause(self):
-        self.interfaceself.ifpause()
+        time.sleep(self.sleepx)
+        return self.interfaceself.ifpause()
+
+    def talkback(self, talk):
+        self.interfaceself.showgcode(talk)
 
     def movex(self, dx, x, mode):
         #self.interfaceself.drillmovemessage("move x")
@@ -116,7 +120,7 @@ class Mysim(gcode.Simulator):
             self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         self.xdriver.disable()
-        time.sleep(self.sleepx)
+        #time.sleep(self.sleepx)
         
 
     def movey(self, dy, y, mode):
@@ -145,7 +149,7 @@ class Mysim(gcode.Simulator):
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         self.ydriver.disable()
-        time.sleep(self.sleepy)
+        #time.sleep(self.sleepy)
 
 
 class Myinterface(interface.Interface):
@@ -166,7 +170,8 @@ class Myinterface(interface.Interface):
                     [21, LEFTCOLUMN, "+, -, zoom graph"],
                     [22, LEFTCOLUMN, "Q) quit closing machine"],
                     [23, LEFTCOLUMN, "e) enable"],
-                    [24, LEFTCOLUMN, "d) disable"]
+                    [24, LEFTCOLUMN, "d) disable"],
+                    [25, LEFTCOLUMN, "f,F slowdown, speedup"]
                 ]
 
 
@@ -176,6 +181,7 @@ class Myinterface(interface.Interface):
         self.parser = gcode.Parse()
         self.sim = Mysim(self.surf, self)
         interface.Interface.__init__(self)
+        self.gcodewin = curses.newwin(10,60,10,5*self.LEFTCOLUMN)
 
     def pause(self):
         go = 1
@@ -191,7 +197,7 @@ class Myinterface(interface.Interface):
         c=self.screen.getch()
         if (c==ord(' ')): 
             self.drillmessage("paused, space to continue")
-        self.generichandler(c)
+        return self.generichandler(c)
 
     def resetorigin(self):
         pass
@@ -214,59 +220,97 @@ class Myinterface(interface.Interface):
         self.sim.draw()
         self.sim.sim(mode)
 
+    def showgcode(self, gcodestring):
+        self.gcodewin.addstr(0,0, gcodestring)
+        self.gcodewin.refresh()
+
+    def updatedata(self, direction, x, y):
+        self.screen.addstr( int(0.9*self.height),
+                            self.LEFTCOLUMN, 
+                            "MANUAL CTRL: {0:<10}".format(direction))
+        self.screen.addstr( int(0.9*self.height)+1,
+                            self.LEFTCOLUMN, 
+                            "CURR CRD: x = {0:<4}  y = {1:<4} step delay = {2:<5}".format(x,y,self.sim.sleepx,self.sim.sleepy))
+        self.screen.refresh()
+
     def generichandler(self, arg):
 
-        if (arg==ord('+')):
+        go=1
+
+        if (arg==ord('q')):
+            go=0
+            return 0
+        elif (arg==ord('l')):
+            self.loadfile()
+        elif (arg==ord('S')):
+            self.dowhateverSis(0)
+        elif (arg==ord('C')):
+            self.dowhateverSis(1)
+        elif (arg==ord('c')):
+            self.resetorigin()
+        elif (arg==ord('+')):
             self.sim.zoom +=0.01
             self.sim.draw()
-        if (arg==ord('-')):
+        elif (arg==ord('-')):
             self.sim.zoom -=0.01
             self.sim.draw()
-        if (arg==ord('w')):
+        elif (arg==ord('w')):
             self.sim.offsety +=0.01
             self.sim.draw()
-        if (arg==ord('z')):
+        elif (arg==ord('z')):
             self.sim.offsety -=0.01
             self.sim.draw()
-        if (arg==ord('a')):
+        elif (arg==ord('a')):
             self.sim.offsetx -=0.01
             self.sim.draw()
-        if (arg==ord('s')):
+        elif (arg==ord('s')):
             self.sim.offsetx +=0.01
             self.sim.draw()
-        if (arg==ord('e')):
+        elif (arg==ord('e')):
             self.screen.addstr(3,3,"ena")
             self.screen.refresh()
             self.sim.xdriver.enable()
             self.sim.ydriver.enable()
-        if (arg==ord('d')):
+        elif (arg==ord('d')):
             self.sim.xdriver.disable()
             self.sim.ydriver.disable()
-        if (arg==ord('i')):
+        elif (arg==ord('i')):
             self.decrementy(5)
-        if (arg==ord('m')):
+        elif (arg==ord('m')):
             self.incrementy(5)
-        if (arg==ord('j')):
+        elif (arg==ord('j')):
             self.decrementx(5)
-        if (arg==ord('k')):
+        elif (arg==ord('k')):
             self.incrementx(5)
-        if (arg==ord('f')):
-            self.sim.sleepx +=0.1
-            self.sim.sleepy +=0.1
-        if (arg==ord('F')):
-            self.sim.sleepx -=0.1
-            self.sim.sleepy -=0.1
-        if (arg==ord('I')):
+        elif (arg==ord('f')):
+            self.sim.sleepx +=0.002
+            self.sim.sleepy +=0.002
+            if (self.sim.sleepx>1):
+                self.sim.sleepx=1
+            if (self.sim.sleepy>1):
+                self.sim.sleepy=1
+        elif (arg==ord('F')):
+            self.sim.sleepx -=0.002
+            self.sim.sleepy -=0.002
+            if (self.sim.sleepx<0.002):
+                self.sim.sleepx=0.002
+            if (self.sim.sleepy<0.002):
+                self.sim.sleepy=0.002
+        elif (arg==ord('I')):
             self.decrementy(100)
-        if (arg==ord('M')):
+        elif (arg==ord('M')):
             self.incrementy(100)
-        if (arg==ord('J')):
+        elif (arg==ord('J')):
             self.decrementx(100)
-        if (arg==ord('K')):
+        elif (arg==ord('K')):
             self.incrementx(100)
 
-        if (arg==ord('Q')):
+        elif (arg==ord('Q')):
             os.system('sudo shutdown -h now')
+
+            
+        return go
+
 
     def resetorigin(self):
         self.sim.X = 0

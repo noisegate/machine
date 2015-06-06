@@ -1,0 +1,1 @@
+rm /dev/shm/cnc/*
