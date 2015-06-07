@@ -151,6 +151,8 @@ class Mysim(gcode.Simulator):
         self.ydriver.disable()
         #time.sleep(self.sleepy)
 
+    def movexyz(self, dx, dy, x, y, mode):
+        pass
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
