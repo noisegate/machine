@@ -131,7 +131,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
             if (self.lasty == -1):
-                if (mode==1): self.ydriver.stepsleft(self.stepspermmY*self.hysty)
+                #if (mode==1): self.ydriver.stepsleft(self.stepspermmY*self.hysty)
                 #self.simydriver.stepsright(self.hysty)
                 self.aanslagy=0
             if (mode==1): self.ydriver.stepsleft(self.stepspermmY*dy)
@@ -140,7 +140,7 @@ class Mysim(gcode.Simulator):
             self.lasty=1
         if (dy<0):
             if (self.lasty == 1):
-                if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
+                #if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
                 #self.simydriver.stepsleft(self.hysty)
                 self.aanslagy=50
             if (mode==1): self.ydriver.stepsright(self.stepspermmY*-dy)

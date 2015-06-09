@@ -105,16 +105,16 @@ class Pololu(object):
             time.sleep(self.stepdelay)
 
     def stepsleft(self, n):
-        self.enable()
+        #self.enable()
         gpio.output(self.pins.direction, gpio.LOW)
         self.steps(n)
-        self.disable()
+        #self.disable()
 
     def stepsright(self,n):
-        self.enable()
+        #self.enable()
         gpio.output(self.pins.direction, gpio.HIGH)
         self.steps(n)
-        self.disable()
+        #self.disable()
 
     @Poshandler
     def goto(self, pos):

@@ -232,13 +232,13 @@ class Simulator(object):
                     if (e2 > -dx):
                         err -= dy
                         x0 += sx
-                        #self.movex(sx, x0/30.0, mode)
+                        self.movex(sx, x0/30.0, mode)
                     if (e2 < dy):
                         err += dx
                         y0 += sy
-                        #self.movey(sy, y0/30.0, mode)
+                        self.movey(sy, y0/30.0, mode)
 
-                    self.movexyz(sx, sy, x0/30.0, y0/30.0, mode)
+                    #self.movexyz(sx, sy, x0/30.0, y0/30.0, mode)
 
                     self.surf.update()
                     gosim = self.pause()
