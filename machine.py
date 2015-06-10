@@ -96,8 +96,8 @@ class Mysim(gcode.Simulator):
 
     def movex(self, dx, x, mode):
         #self.interfaceself.drillmovemessage("move x")
-        self.xdriver.enable() 
-        time.sleep(0.01)
+        #self.xdriver.enable() 
+        #time.sleep(0.01)
         self.X+=dx
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
@@ -119,14 +119,14 @@ class Mysim(gcode.Simulator):
             if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
             self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        self.xdriver.disable()
+        #self.xdriver.disable()
         #time.sleep(self.sleepx)
         
 
     def movey(self, dy, y, mode):
         #self.interfaceself.drillmovemessage("move y")
-        self.ydriver.enable()
-        time.sleep(0.01)
+        #self.ydriver.enable()
+        #time.sleep(0.01)
         self.Y+=dy
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
@@ -148,7 +148,7 @@ class Mysim(gcode.Simulator):
             if (self.aanslagy<0): self.simydriver.stepsright(-dy)
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
-        self.ydriver.disable()
+        #self.ydriver.disable()
         #time.sleep(self.sleepy)
 
     def movexyz(self, dx, dy, x, y, mode):
@@ -189,10 +189,11 @@ class Myinterface(interface.Interface):
         go = 1
         while (go):
             c=self.screen.getch()
+            self.generichandler(c)
             if (c==ord(' ')): 
                 go=0
-            if (c==ord('q')):
-                return -1
+            #if (c==ord('q')):
+            #    return -1
         return 0
 
     def ifpause(self):
@@ -285,19 +286,19 @@ class Myinterface(interface.Interface):
         elif (arg==ord('k')):
             self.incrementx(5)
         elif (arg==ord('f')):
-            self.sim.sleepx +=0.002
-            self.sim.sleepy +=0.002
+            self.sim.sleepx +=0.001
+            self.sim.sleepy +=0.001
             if (self.sim.sleepx>1):
                 self.sim.sleepx=1
             if (self.sim.sleepy>1):
                 self.sim.sleepy=1
         elif (arg==ord('F')):
-            self.sim.sleepx -=0.002
-            self.sim.sleepy -=0.002
-            if (self.sim.sleepx<0.002):
-                self.sim.sleepx=0.002
-            if (self.sim.sleepy<0.002):
-                self.sim.sleepy=0.002
+            self.sim.sleepx -=0.001
+            self.sim.sleepy -=0.001
+            if (self.sim.sleepx<0.001):
+                self.sim.sleepx=0.001
+            if (self.sim.sleepy<0.001):
+                self.sim.sleepy=0.001
         elif (arg==ord('I')):
             self.decrementy(100)
         elif (arg==ord('M')):
