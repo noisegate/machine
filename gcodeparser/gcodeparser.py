@@ -192,10 +192,10 @@ class Simulator(object):
                 #self.surf.line(self.trafo(geometry.point1), self.trafo(geometry.point2))
                 X0 = geometry.point1
                 X1 = geometry.point2
-                x0 = int(X0.x*30)
-                x1 = int(X1.x*30)
-                y0 = int(X0.y*30)
-                y1 = int(X1.y*30)
+                x0 = int(X0.x*130)
+                x1 = int(X1.x*130)
+                y0 = int(X0.y*130)
+                y1 = int(X1.y*130)
                 if (X1.z > oldz):
                     self.raisedrill()
                     oldz = X1.z
@@ -222,8 +222,8 @@ class Simulator(object):
 
                 while(go):
                     self.surf.point(
-                                    (self.trafox(x0/30.0), 
-                                    -self.trafoy(y0/30.0))
+                                    (self.trafox(x0/130.0), 
+                                    -self.trafoy(y0/130.0))
                                    )
                     #go=0
                     if (x0==x1 and y1==y0): 
@@ -232,11 +232,11 @@ class Simulator(object):
                     if (e2 > -dx):
                         err -= dy
                         x0 += sx
-                        self.movex(sx, x0/30.0, mode)
+                        self.movex(sx, x0/130.0, mode)
                     if (e2 < dy):
                         err += dx
                         y0 += sy
-                        self.movey(sy, y0/30.0, mode)
+                        self.movey(sy, y0/130.0, mode)
 
                     #self.movexyz(sx, sy, x0/30.0, y0/30.0, mode)
 
@@ -284,11 +284,18 @@ class Parse(object):
                          break
                     flag = 0
                     #parse g code
-                    gg = re.search("[gG]([\d]+)\D",gcode)
-                    xx = re.search("[xX]([\d\.\-]+)\D",gcode)
-                    yy = re.search("[yY]([\d\.\-]+)\D",gcode)
-                    zz = re.search("[zZ]([\d\.\-]+)\D",gcode)
-                    ss = re.search("[fF]([\d\.\-]+)\D",gcode)
+                    if (gcode[0]==';'):
+                         gg=None
+                         xx=None
+                         yy=None
+                         zz=None
+                         ss=None
+                    else:
+                         gg = re.search("[gG]([\d]+)\D",gcode)
+                         xx = re.search("[xX]([\d\.\-]+)\D",gcode)
+                         yy = re.search("[yY]([\d\.\-]+)\D",gcode)
+                         zz = re.search("[zZ]([\d\.\-]+)\D",gcode)
+                         ss = re.search("[fF]([\d\.\-]+)\D",gcode)
                     if (gg):
                          style = int(gg.group(1))
                     if (xx):
@@ -362,7 +369,8 @@ if __name__ == "__main__":
     main = fb.Surface()
     surf = fb.Surface((800,400),(200,200))
 
-    parser = Parse('./spacer.ngc')
+    parser = Parse()
+    parser.filename = '/dev/shm/cnc/small-gear-1off.ngc'
     parser.parse()
     
     class Mysim(Simulator):
@@ -383,8 +391,8 @@ if __name__ == "__main__":
         def movey(self, dy):
             pass
 
-    sim = Mysim(parser.geometries, surf)
+    #sim = Mysim(parser.geometries, surf)
     
-    sim.draw()
-    sim.sim()
+    #sim.draw()
+    #sim.sim()
 
