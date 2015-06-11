@@ -68,8 +68,8 @@ class Mysim(gcode.Simulator):
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
             self.xdriver.disable()
             self.ydriver.disable()
-            self.ydriver.speed=260
-            self.xdriver.speed=260
+            self.ydriver.speed=300
+            self.xdriver.speed=300
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -102,22 +102,22 @@ class Mysim(gcode.Simulator):
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dx>0):
             if (self.lastx == -1):
-                if (mode==1): self.xdriver.stepsright(self.stepspermmX*self.hystx)
-                self.simxdriver.stepsleft(self.hystx)
+                #if (mode==1): self.xdriver.stepsleft(self.stepspermmX*self.hystx)
+                #self.simxdriver.stepsleft(self.hystx)
                 self.aanslagx = 0
-            if (mode==1): self.xdriver.stepsright(self.stepspermmX*dx)
-            self.aanslagx-=dx
-            if (self.aanslagx<0): self.simxdriver.stepsright(dx)
-            self.lastx=1    
+            if (mode==1): self.xdriver.stepsleft(self.stepspermmX*dx)
+            #self.aanslagx-=dx
+            #if (self.aanslagx<0): self.simxdriver.stepsright(dx)
+            #self.lastx=1    
         if(dx<0):
             if (self.lastx == 1):
-                if (mode==1): self.xdriver.stepsleft(self.stepspermmX*self.hystx)
-                self.simxdriver.stepsright(self.hystx)
+                #if (mode==1): self.xdriver.stepsright(self.stepspermmX*self.hystx)
+                #self.simxdriver.stepsright(self.hystx)
                 self.aanslagx= 0
-            if (mode==1): self.xdriver.stepsleft(self.stepspermmX*-dx)
-            self.aanslagx+=dx
-            if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
-            self.lastx=-1
+            if (mode==1): self.xdriver.stepsright(self.stepspermmX*-dx)
+            #self.aanslagx+=dx
+            #if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
+            #self.lastx=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         #self.xdriver.disable()
         #time.sleep(self.sleepx)
@@ -131,21 +131,21 @@ class Mysim(gcode.Simulator):
         self.interfaceself.updatedata("none", self.X, self.Y)
         if (dy>0):
             if (self.lasty == -1):
-                #if (mode==1): self.ydriver.stepsleft(self.stepspermmY*self.hysty)
+                #if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
                 #self.simydriver.stepsright(self.hysty)
                 self.aanslagy=0
-            if (mode==1): self.ydriver.stepsleft(self.stepspermmY*dy)
-            self.aanslagy-=dy
-            if (self.aanslagy<0): self.simydriver.stepsleft(dy)
+            if (mode==1): self.ydriver.stepsright(self.stepspermmY*dy)
+            #self.aanslagy-=dy
+            #if (self.aanslagy<0): self.simydriver.stepsleft(dy)
             self.lasty=1
         if (dy<0):
             if (self.lasty == 1):
                 #if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
                 #self.simydriver.stepsleft(self.hysty)
                 self.aanslagy=50
-            if (mode==1): self.ydriver.stepsright(self.stepspermmY*-dy)
-            self.aanslagy+=dy
-            if (self.aanslagy<0): self.simydriver.stepsright(-dy)
+            if (mode==1): self.ydriver.stepsleft(self.stepspermmY*-dy)
+            #self.aanslagy+=dy
+            #if (self.aanslagy<0): self.simydriver.stepsright(-dy)
             self.lasty=-1
         if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
         #self.ydriver.disable()
@@ -286,19 +286,19 @@ class Myinterface(interface.Interface):
         elif (arg==ord('k')):
             self.incrementx(5)
         elif (arg==ord('f')):
-            self.sim.sleepx +=0.001
-            self.sim.sleepy +=0.001
+            self.sim.sleepx +=0.0001
+            self.sim.sleepy +=0.0001
             if (self.sim.sleepx>1):
                 self.sim.sleepx=1
             if (self.sim.sleepy>1):
                 self.sim.sleepy=1
         elif (arg==ord('F')):
-            self.sim.sleepx -=0.001
-            self.sim.sleepy -=0.001
-            if (self.sim.sleepx<0.001):
-                self.sim.sleepx=0.001
-            if (self.sim.sleepy<0.001):
-                self.sim.sleepy=0.001
+            self.sim.sleepx -=0.0001
+            self.sim.sleepy -=0.0001
+            if (self.sim.sleepx<0.0001):
+                self.sim.sleepx=0.0001
+            if (self.sim.sleepy<0.0001):
+                self.sim.sleepy=0.0001
         elif (arg==ord('I')):
             self.decrementy(100)
         elif (arg==ord('M')):
