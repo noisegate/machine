@@ -68,8 +68,8 @@ class Mysim(gcode.Simulator):
             self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
             self.xdriver.disable()
             self.ydriver.disable()
-            self.ydriver.speed=300
-            self.xdriver.speed=300
+            self.ydriver.speed=200
+            self.xdriver.speed=200
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -187,7 +187,7 @@ class Myinterface(interface.Interface):
 
     def __init__(self):
         self.surface = fb.Surface()
-        self.surf = fb.Surface((800,200),(300,300))
+        self.surf = fb.Surface((650,200),(500,500))
         self.parser = gcode.Parse()
         self.sim = Mysim(self.surf, self)
         interface.Interface.__init__(self)
@@ -260,22 +260,22 @@ class Myinterface(interface.Interface):
         elif (arg==ord('c')):
             self.resetorigin()
         elif (arg==ord('+')):
-            self.sim.zoom +=0.01
+            self.sim.zoom +=0.05
             self.sim.draw()
         elif (arg==ord('-')):
-            self.sim.zoom -=0.01
+            self.sim.zoom -=0.05
             self.sim.draw()
         elif (arg==ord('w')):
-            self.sim.offsety +=0.01
+            self.sim.offsety +=0.05
             self.sim.draw()
         elif (arg==ord('z')):
-            self.sim.offsety -=0.01
+            self.sim.offsety -=0.05
             self.sim.draw()
         elif (arg==ord('a')):
-            self.sim.offsetx -=0.01
+            self.sim.offsetx -=0.05
             self.sim.draw()
         elif (arg==ord('s')):
-            self.sim.offsetx +=0.01
+            self.sim.offsetx +=0.05
             self.sim.draw()
         elif (arg==ord('e')):
             self.screen.addstr(3,3,"motor enabled ")
@@ -309,13 +309,13 @@ class Myinterface(interface.Interface):
             if (self.sim.sleepy<0.0001):
                 self.sim.sleepy=0.0001
         elif (arg==ord('I')):
-            self.decrementy(100)
+            self.decrementy(300)
         elif (arg==ord('M')):
-            self.incrementy(100)
+            self.incrementy(300)
         elif (arg==ord('J')):
-            self.decrementx(100)
+            self.decrementx(300)
         elif (arg==ord('K')):
-            self.incrementx(100)
+            self.incrementx(300)
 
         elif (arg==ord('Q')):
             os.system('sudo shutdown -h now')
