@@ -152,14 +152,22 @@ class Mysim(gcode.Simulator):
         #time.sleep(self.sleepy)
 
     def movexyz(self, dx, dy, x, y, mode):
-        pass
+        if (dx>0 and dy>0):
+            pass
+        if (dx>0 and dy<0):
+            pass
+        if (dx<0 and dy>0):
+            pass
+        if (dx<0 and dy<0):
+            pass
+        
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
 
     menudata =  [
-                    [10, LEFTCOLUMN, "MENU"],
-                    [11, LEFTCOLUMN, "===="],
+                    [10, LEFTCOLUMN, "         MENU"],
+                    [11, LEFTCOLUMN, "======================="],
                     [12, LEFTCOLUMN, "q)      quit"],
                     [13, LEFTCOLUMN, "C)      start milling"],
                     [14, LEFTCOLUMN, "S)      simulate"],
@@ -171,8 +179,8 @@ class Myinterface(interface.Interface):
                     [20, LEFTCOLUMN, "a,w,s,z move graph"],
                     [21, LEFTCOLUMN, "+, -, zoom graph"],
                     [22, LEFTCOLUMN, "Q) quit closing machine"],
-                    [23, LEFTCOLUMN, "e) enable"],
-                    [24, LEFTCOLUMN, "d) disable"],
+                    [23, LEFTCOLUMN, "e) enablei motor"],
+                    [24, LEFTCOLUMN, "d) disable motor"],
                     [25, LEFTCOLUMN, "f,F slowdown, speedup"]
                 ]
 
@@ -270,11 +278,12 @@ class Myinterface(interface.Interface):
             self.sim.offsetx +=0.01
             self.sim.draw()
         elif (arg==ord('e')):
-            self.screen.addstr(3,3,"ena")
+            self.screen.addstr(3,3,"motor enabled ")
             self.screen.refresh()
             self.sim.xdriver.enable()
             self.sim.ydriver.enable()
         elif (arg==ord('d')):
+            self.screen.addstr(3,3,"motor disabled")
             self.sim.xdriver.disable()
             self.sim.ydriver.disable()
         elif (arg==ord('i')):
