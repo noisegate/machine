@@ -88,7 +88,8 @@ class Mysim(gcode.Simulator):
         self.interfaceself.drillmessage("Simulation finished, press space to continue") 
 
     def pause(self):
-        time.sleep(self.sleepx)
+        #time.sleep(self.sleepx)
+        time.sleep(self.xydriver.stepdelay)
         return self.interfaceself.ifpause()
 
     def talkback(self, talk):
