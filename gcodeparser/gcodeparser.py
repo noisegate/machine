@@ -112,6 +112,11 @@ class Simulator(object):
         self.offsetx = 0.5
         self.offsety = 0.5
 
+        self.linecounter = 0
+        self.SCALE = 100.0
+        self.forward = True
+
+
     def redraw(self):
         self.surf.clear()
         self.surf.pixelstyle.color = fb.Color(250,250,250,0)
@@ -182,20 +187,26 @@ class Simulator(object):
     def sim(self, mode):
         oldz=0
         gosim=1
-        linecounter = 0
+        self.linecounter = 0
         maxlines = len(self.geometries.geometries)
 
-        while((gosim==1) and (linecounter<maxlines)):
+        while((gosim==1) and (self.linecounter<maxlines)):
         #for geometry in self.geometries.geometries :
-            geometry = self.geometries.geometries[linecounter]
+            geometry = self.geometries.geometries[self.linecounter]
             if isinstance(geometry, Line):
                 #self.surf.line(self.trafo(geometry.point1), self.trafo(geometry.point2))
-                X0 = geometry.point1
-                X1 = geometry.point2
-                x0 = int(X0.x*100)
-                x1 = int(X1.x*100)
-                y0 = int(X0.y*100)
-                y1 = int(X1.y*100)
+                
+                if self.forward:
+                    X0 = geometry.point1
+                    X1 = geometry.point2
+                else:
+                    X1 = geometry.point1
+                    X0 = geometry.point2
+
+                x0 = int(X0.x*self.SCALE)
+                x1 = int(X1.x*self.SCALE)
+                y0 = int(X0.y*self.SCALE)
+                y1 = int(X1.y*self.SCALE)
                 if (X1.z > oldz):
                     self.raisedrill()
                     oldz = X1.z
@@ -222,8 +233,8 @@ class Simulator(object):
 
                 while(go):
                     self.surf.point(
-                                    (self.trafox(x0/100.0), 
-                                    -self.trafoy(y0/100.0))
+                                    (self.trafox(x0/self.SCALE), 
+                                    -self.trafoy(y0/self.SCALE))
                                    )
                     #go=0
                     deltax = 0
@@ -242,19 +253,23 @@ class Simulator(object):
                         deltay=sy
                         #self.movey(sy, y0/100.0, mode)
 
-                    self.movexyz(deltax, deltay, x0/30.0, y0/30.0, mode)
+                    self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode)
 
                     self.surf.update()
                     gosim = self.pause()
                     if (gosim==0):
                         go=0
-                    startline = linecounter-3
-                    endline = linecounter+3
+                    if (gosim==-1):
+                        go=0
+                        gosim=1
+
+                    startline = self.linecounter-3
+                    endline = self.linecounter+3
                     if startline<0: startline = 0
                     if endline>len(self.geometries.geometries): endline = len(self.geometries.geometries)
                     self.talkback("".join(["{0:>4}: {1}".format(i,self.geometries.geometries[i].gcode) for i in range(startline,endline)]))            
 
-            linecounter += 1
+            self.linecounter += 1
 
         self.simfinished()
 

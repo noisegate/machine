@@ -250,10 +250,16 @@ class Myinterface(interface.Interface):
             self.decrementx(300)
         elif (arg==ord('K')):
             self.incrementx(300)
-
+        elif (arg==ord('<')):
+            self.sim.linecounter-=2
+            go=-1
+            self.sim.forward=False
+        elif (arg==ord('>')):
+            self.sim.linecounter+=0
+            go=-1
+            self.sim.forward=True
         elif (arg==ord('Q')):
             os.system('sudo shutdown -h now')
-
             
         return go
 
