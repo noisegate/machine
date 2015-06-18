@@ -8,7 +8,7 @@ import curses.textpad
 import os
 import data
 try:
-    import pololu.dipololu as pololu
+    import pololu.pololu as pololu
     POLOLU_AVAILABLE = True
 except ImportError:
     print "WARNING, NO HARDWARE SUPPORT, ONLY SIMULATION. press enter to continue"
@@ -64,12 +64,12 @@ class Mysim(gcode.Simulator):
         self.aanslagx=0
         
         if (POLOLU_AVAILABLE):
-            self.xydriver = pololu.Pololu(pololu.Pins(enablex = 25, directionx=23, stepx=24, enabley=22, directiony=17,stepy=27))
-
-            #self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
-            #self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
-            self.xydriver.disable()
-            self.xydriver.speed=40
+            self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
+            self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
+            self.xdriver.disable()
+            self.ydriver.disable()
+            self.ydriver.speed=200
+            self.xdriver.speed=200
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -94,8 +94,73 @@ class Mysim(gcode.Simulator):
     def talkback(self, talk):
         self.interfaceself.showgcode(talk)
 
+    def movex(self, dx, x, mode):
+        #self.interfaceself.drillmovemessage("move x")
+        #self.xdriver.enable() 
+        #time.sleep(0.01)
+        self.X+=dx
+        self.interfaceself.updatedata("none", self.X, self.Y)
+        if (dx>0):
+            if (self.lastx == -1):
+                #if (mode==1): self.xdriver.stepsleft(self.stepspermmX*self.hystx)
+                #self.simxdriver.stepsleft(self.hystx)
+                self.aanslagx = 0
+            if (mode==1): self.xdriver.stepsleft(self.stepspermmX*dx)
+            #self.aanslagx-=dx
+            #if (self.aanslagx<0): self.simxdriver.stepsright(dx)
+            #self.lastx=1    
+        if(dx<0):
+            if (self.lastx == 1):
+                #if (mode==1): self.xdriver.stepsright(self.stepspermmX*self.hystx)
+                #self.simxdriver.stepsright(self.hystx)
+                self.aanslagx= 0
+            if (mode==1): self.xdriver.stepsright(self.stepspermmX*-dx)
+            #self.aanslagx+=dx
+            #if (self.aanslagx<0): self.simxdriver.stepsleft(-dx)
+            #self.lastx=-1
+        if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
+        #self.xdriver.disable()
+        #time.sleep(self.sleepx)
+        
+
+    def movey(self, dy, y, mode):
+        #self.interfaceself.drillmovemessage("move y")
+        #self.ydriver.enable()
+        #time.sleep(0.01)
+        self.Y+=dy
+        self.interfaceself.updatedata("none", self.X, self.Y)
+        if (dy>0):
+            if (self.lasty == -1):
+                #if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
+                #self.simydriver.stepsright(self.hysty)
+                self.aanslagy=0
+            if (mode==1): self.ydriver.stepsright(self.stepspermmY*dy)
+            #self.aanslagy-=dy
+            #if (self.aanslagy<0): self.simydriver.stepsleft(dy)
+            self.lasty=1
+        if (dy<0):
+            if (self.lasty == 1):
+                #if (mode==1): self.ydriver.stepsright(self.stepspermmY*self.hysty)
+                #self.simydriver.stepsleft(self.hysty)
+                self.aanslagy=50
+            if (mode==1): self.ydriver.stepsleft(self.stepspermmY*-dy)
+            #self.aanslagy+=dy
+            #if (self.aanslagy<0): self.simydriver.stepsright(-dy)
+            self.lasty=-1
+        if (mode==0): self.surf.point((self.trafox(self.simxdriver.X/30.0), self.trafoy(self.simydriver.X/30.0)))    
+        #self.ydriver.disable()
+        #time.sleep(self.sleepy)
+
     def movexyz(self, dx, dy, x, y, mode):
-        self.xydriver.steps([dx, dy])
+        if (dx>0 and dy>0):
+            pass
+        if (dx>0 and dy<0):
+            pass
+        if (dx<0 and dy>0):
+            pass
+        if (dx<0 and dy<0):
+            pass
+        
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
@@ -149,16 +214,16 @@ class Myinterface(interface.Interface):
         pass
 
     def decrementx(self, n):
-        self.sim.movexyz(-n,0,0,0,0)       
+        self.sim.movex(-n,0, 1)       
 
     def decrementy(self,n):
-        self.sim.movexyz(0, n, 0 , 0, 0)
+        self.sim.movey(n,0 ,1)
 
     def incrementx(self,n):
-        self.sim.movexyz(n, 0, 0, 0, 0)
+        self.sim.movex(n, 0, 1)
 
     def incrementy(self,n):
-        self.sim.movexyz(0,-n, 0, 0, 0)
+        self.sim.movey(-n,0, 1)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
@@ -215,10 +280,12 @@ class Myinterface(interface.Interface):
         elif (arg==ord('e')):
             self.screen.addstr(3,3,"motor enabled ")
             self.screen.refresh()
-            self.sim.xydriver.enable()
+            self.sim.xdriver.enable()
+            self.sim.ydriver.enable()
         elif (arg==ord('d')):
             self.screen.addstr(3,3,"motor disabled")
-            self.sim.xydriver.disable()
+            self.sim.xdriver.disable()
+            self.sim.ydriver.disable()
         elif (arg==ord('i')):
             self.decrementy(5)
         elif (arg==ord('m')):

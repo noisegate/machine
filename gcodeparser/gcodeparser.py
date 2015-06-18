@@ -226,19 +226,23 @@ class Simulator(object):
                                     -self.trafoy(y0/100.0))
                                    )
                     #go=0
+                    deltax = 0
+                    deltay = 0
                     if (x0==x1 and y1==y0): 
                         go=0
                     e2 = err
                     if (e2 > -dx):
                         err -= dy
                         x0 += sx
-                        self.movex(sx, x0/100.0, mode)
+                        deltax = sx
+                        #self.movex(sx, x0/100.0, mode)
                     if (e2 < dy):
                         err += dx
                         y0 += sy
-                        self.movey(sy, y0/100.0, mode)
+                        deltay=sy
+                        #self.movey(sy, y0/100.0, mode)
 
-                    #self.movexyz(sx, sy, x0/30.0, y0/30.0, mode)
+                    self.movexyz(deltax, deltay, x0/30.0, y0/30.0, mode)
 
                     self.surf.update()
                     gosim = self.pause()
