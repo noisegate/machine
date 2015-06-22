@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <machine>
-<stepspermmx>2</stepspermmx>
-<stepspermmy>2</stepspermmy>
+<stepspermmx>10</stepspermmx>
+<stepspermmy>10</stepspermmy>
 <hysteresisx>0</hysteresisx>
 <hysteresisy>0</hysteresisy>
 <speedx>0.0005</speedx>

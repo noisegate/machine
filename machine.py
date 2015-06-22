@@ -65,11 +65,8 @@ class Mysim(gcode.Simulator):
         
         if (POLOLU_AVAILABLE):
             self.xydriver = pololu.Pololu(pololu.Pins(enablex = 25, directionx=23, stepx=24, enabley=22, directiony=17,stepy=27))
-
-            #self.ydriver = pololu.Pololu(pololu.Pins(enable=22, direction=17, step=27))
-            #self.xdriver = pololu.Pololu(pololu.Pins(enable=25, direction=23, step=24))
             self.xydriver.disable()
-            self.xydriver.speed=40
+            self.xydriver.speed=220
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -96,7 +93,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.showgcode(talk)
 
     def movexyz(self, dx, dy, x, y, mode):
-        self.xydriver.steps([dx, dy])
+        self.xydriver.steps([dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
@@ -183,8 +180,10 @@ class Myinterface(interface.Interface):
     def generichandler(self, arg):
 
         go=1
-
-        if (arg==ord('q')):
+       
+        if (arg==-1):
+            return go
+        elif (arg==ord('q')):
             go=0
             return 0
         elif (arg==ord('l')):
