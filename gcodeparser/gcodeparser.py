@@ -140,6 +140,10 @@ class Simulator(object):
         self.SCALE = 100.0
         self.forward = True
 
+        self.currentx0=0
+        self.currentx1=0
+        self.currenty0=0
+        self.currenty1=0
 
     def redraw(self):
         self.surf.clear()
@@ -208,6 +212,65 @@ class Simulator(object):
         #moves simultaneously (45 degs and 90)
         pass
 
+    def interviolate(self, x0, x1, y0, y1, mode):
+        #Bressenhemzzz
+        dx = abs(x1-x0)
+        if (x0<x1): 
+            sx = 1
+        else: 
+            sx = -1
+        dy = abs(y1-y0)
+        if (y0<y1): 
+            sy = 1
+        else: 
+            sy = -1
+        if (dx>dy): 
+            err = int(dx/2)
+        else: 
+            err = int(-dy/2)
+
+        go=1
+
+        while(go):
+            self.surf.point(
+                            (self.trafox(x0/self.SCALE), 
+                            -self.trafoy(y0/self.SCALE))
+                           )
+            #go=0
+            deltax = 0
+            deltay = 0
+            if (x0==x1 and y1==y0): 
+                go=0
+            e2 = err
+            if (e2 > -dx):
+                err -= dy
+                x0 += sx
+                deltax = sx
+            if (e2 < dy):
+                err += dx
+                y0 += sy
+                deltay=sy
+
+            self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode)
+
+            self.surf.update()
+            self.currentx0 = x0
+            self.currenty0 = y0
+           
+            gosim = self.pause()
+
+            if (gosim==0):
+                go=0
+            if (gosim==-1):
+                go=0
+                gosim=1
+
+            #startline = self.linecounter-3
+            #endline = self.linecounter+3
+            #if startline<0: startline = 0
+            #if endline>len(self.geometries.geometries): endline = len(self.geometries.geometries)
+            #self.talkback("".join(["{0:>4}: {1}".format(i,self.geometries.geometries[i].gcode) for i in range(startline,endline)]))            
+
     def sim(self, mode):
         oldz=0
         gosim=1
@@ -238,60 +301,7 @@ class Simulator(object):
                     self.lowerdrill()
                     oldz = X1.z
                 #bressenham's
-                dx = abs(x1-x0)
-                if (x0<x1): 
-                    sx = 1
-                else: 
-                    sx = -1
-                dy = abs(y1-y0)
-                if (y0<y1): 
-                    sy = 1
-                else: 
-                    sy = -1
-                if (dx>dy): 
-                    err = int(dx/2)
-                else: 
-                    err = int(-dy/2)
-
-                go=1
-
-                while(go):
-                    self.surf.point(
-                                    (self.trafox(x0/self.SCALE), 
-                                    -self.trafoy(y0/self.SCALE))
-                                   )
-                    #go=0
-                    deltax = 0
-                    deltay = 0
-                    if (x0==x1 and y1==y0): 
-                        go=0
-                    e2 = err
-                    if (e2 > -dx):
-                        err -= dy
-                        x0 += sx
-                        deltax = sx
-                        #self.movex(sx, x0/100.0, mode)
-                    if (e2 < dy):
-                        err += dx
-                        y0 += sy
-                        deltay=sy
-                        #self.movey(sy, y0/100.0, mode)
-
-                    self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode)
-
-                    self.surf.update()
-                    gosim = self.pause()
-                    if (gosim==0):
-                        go=0
-                    if (gosim==-1):
-                        go=0
-                        gosim=1
-
-                    startline = self.linecounter-3
-                    endline = self.linecounter+3
-                    if startline<0: startline = 0
-                    if endline>len(self.geometries.geometries): endline = len(self.geometries.geometries)
-                    self.talkback("".join(["{0:>4}: {1}".format(i,self.geometries.geometries[i].gcode) for i in range(startline,endline)]))            
+                self.interviolate(x0, x1, y0, y1, mode)
 
             self.linecounter += 1
 
