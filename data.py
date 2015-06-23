@@ -35,6 +35,8 @@ class Calibrate(object):
                 self.speedx = float(self.gettext(element.childNodes))
             for element in machine.getElementsByTagName("speedy"):
                 self.speedy = float(self.gettext(element.childNodes))
+            for element in machine.getElementsByTagName("scale"):
+                self.scale = float(self.gettext(element.childNodes))
 
 if __name__ == "__main__":
     print Calibrate.getdata()

@@ -17,11 +17,35 @@ import numpy
 HUGE = 100000
 
 class Point(object):
-     
+    scale = .718166     
     def __init__(self,x ,y ,z):
-         self.x = x
-         self.y = y
-         self.z = z
+        self.x_ = x
+        self.y_ = y
+        self.z_ = z
+
+    @property
+    def x(self):
+        return self.x_ * self.scale
+
+    @x.setter
+    def x(self, x_):
+        self.x_ = x_
+
+    @property
+    def y(self):
+        return self.y_ * self.scale
+
+    @y.setter
+    def y(self, y_):
+        self.y_ = y_
+
+    @property
+    def z(self):
+        return self.z_ * self.scale
+
+    @z.setter
+    def z(self, z_):
+        self.z_ = z_
 
 class Geom(object):
     pass
@@ -35,7 +59,7 @@ class Line(object):
         self.no = no
         self.type = "line"
         self.gcode = gcode
-
+        
 class Arc(object):
     
     def __init__(self, point1, point2, center, speed, no):
@@ -277,7 +301,7 @@ class Parse(object):
 
      def __init__(self):
           self.filename = None
-          self.geometries = Geometries()
+          self.geometries = None#Geometries()
           self.no_points = 0
 
      def parse(self):
@@ -287,6 +311,7 @@ class Parse(object):
           except IOError, (errno, strerror):
                error_dialog("Unable to open the file" + gcodes.name + "\n",1)
           else:
+               self.geometries = Geometries()
                pre_x = 0.0
                pre_y = 0.0
                pre_z = 0.0

@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 
 <machine>
-<stepspermmx>10</stepspermmx>
-<stepspermmy>10</stepspermmy>
+<stepspermmx>4</stepspermmx>
+<stepspermmy>4</stepspermmy>
 <hysteresisx>0</hysteresisx>
 <hysteresisy>0</hysteresisy>
 <speedx>0.0005</speedx>
 <speedy>0.0005</speedy>
+<scale>0.718166</scale>
 </machine>
 

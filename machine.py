@@ -60,11 +60,22 @@ class Mysim(gcode.Simulator):
         self.hystx=params.hysteresisx 
         self.hysty=params.hysteresisy 
         gcode.Simulator.__init__(self, surf)
+        gcode.Point.scale = params.scale
         self.aanslagy=0
         self.aanslagx=0
         
         if (POLOLU_AVAILABLE):
-            self.xydriver = pololu.Pololu(pololu.Pins(enablex = 25, directionx=23, stepx=24, enabley=22, directiony=17,stepy=27))
+            self.xydriver = pololu.Pololu(
+                                            pololu.Pins(
+                                                        enablex = 25, 
+                                                        directionx=23, 
+                                                        stepx=24, 
+                                                        enabley=22, 
+                                                        directiony=17,
+                                                        stepy=27
+                                                        )
+                                            
+                                           )
             self.xydriver.disable()
             self.xydriver.speed=220
         else:
@@ -93,7 +104,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.showgcode(talk)
 
     def movexyz(self, dx, dy, x, y, mode):
-        self.xydriver.steps([dx*self.stepspermmX, dy*self.stepspermmY])
+        self.xydriver.steps([-dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
     LEFTCOLUMN = 10
@@ -125,6 +136,7 @@ class Myinterface(interface.Interface):
         self.sim = Mysim(self.surf, self)
         interface.Interface.__init__(self)
         self.gcodewin = curses.newwin(10,60,10,5*self.LEFTCOLUMN)
+        self.filewin = curses.newwin(10,60,40,self.LEFTCOLUMN)
 
     def pause(self):
         go = 1
@@ -249,10 +261,18 @@ class Myinterface(interface.Interface):
             self.decrementx(300)
         elif (arg==ord('K')):
             self.incrementx(300)
+        elif (arg==ord('U')):
+            self.sim.movexyz(-300,-300,0,0,0)
+        elif (arg==ord('O')):
+            self.sim.movexyz(300,-300,0,0,0)
+        elif (arg==ord(',')):
+            self.sim.movexyz(300,300,0,0,0)
+        elif (arg==ord('N')):
+            self.sim.movexyz(-300,300,0,0,0)
         elif (arg==ord('<')):
             self.sim.linecounter-=2
             go=-1
-            self.sim.forward=False
+            self.sim.forward=True
         elif (arg==ord('>')):
             self.sim.linecounter+=0
             go=-1
@@ -261,7 +281,6 @@ class Myinterface(interface.Interface):
             os.system('sudo shutdown -h now')
             
         return go
-
 
     def resetorigin(self):
         self.sim.X = 0
@@ -281,22 +300,36 @@ class Myinterface(interface.Interface):
         self.screen.refresh()
 
     def loadfile(self):
+        self.filewin.addstr(0,0,"Available files:")
+        self.filewin.addstr(1,0,"================")
         files=glob.glob("/dev/shm/cnc/*.ngc")
-        self.parser.filename = files[0]
+        for lineno, filename in enumerate(files):
+            self.filewin.addstr(lineno+2, 0, "{0:<3}:{1}".format(lineno+1, filename))
+
+        self.filewin.refresh()
+    
+        go=1
+        while(go):
+            c=self.screen.getch()
+            if c>-1:
+                    self.parser.filename = files[c-49]
+                    go=0
+        
         self.parser.parse()
         self.sim.geometries = self.parser.geometries
         self.sim.draw()
 
     def calibrate(self):
         #work in progress...
-        self.screen.keypad(1)
-        win = curses.newwin(5, 60, 5, 10)
-        tb = curses.textpad.Textbox(win)
-        text = tb.edit()
-        curses.beep()
+        #self.screen.keypad(1)
+        #win = curses.newwin(5, 60, 5, 10)
+        #tb = curses.textpad.Textbox(win)
+        #text = tb.edit()
+        #curses.beep()
         #ofzoo....
-        self.sim.stepspermmX = int(text.encode('utf_8'))
-                
+        #self.sim.stepspermmX = int(text.encode('utf_8'))
+        pass
+
     def handlerestkeypresses(self,c):
         if (c==ord('c')):
             #calibrate
