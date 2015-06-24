@@ -82,7 +82,7 @@ class Geometries(object):
         self.arcs = 0
         self.xtent = 0
         self.ytent = 0
-
+        
     def add(self, geometry):
         self.geometries.append(geometry)
 
@@ -265,16 +265,12 @@ class Simulator(object):
                 go=0
                 gosim=1
 
-            #startline = self.linecounter-3
-            #endline = self.linecounter+3
-            #if startline<0: startline = 0
-            #if endline>len(self.geometries.geometries): endline = len(self.geometries.geometries)
-            #self.talkback("".join(["{0:>4}: {1}".format(i,self.geometries.geometries[i].gcode) for i in range(startline,endline)]))            
+        return gosim
 
     def sim(self, mode):
         oldz=0
         gosim=1
-        self.linecounter = 0
+        #self.linecounter = 0
         maxlines = len(self.geometries.geometries)
 
         while((gosim==1) and (self.linecounter<maxlines)):
@@ -300,8 +296,22 @@ class Simulator(object):
                 if (X1.z < oldz):
                     self.lowerdrill()
                     oldz = X1.z
+
+                startline = self.linecounter-15
+                endline = self.linecounter+15
+                if startline<0: startline = 0
+                if endline>len(self.geometries.geometries): endline = len(self.geometries.geometries)
+                 
+                self.talkback("".join(["{0} {1:>4}: {2}".format(
+                                        ('>' if i==self.linecounter else '.'), 
+                                        i, 
+                                        self.geometries.geometries[i].gcode) for i in range(startline,endline)
+                                       ]
+                                     )
+                             )            
+    
                 #bressenham's
-                self.interviolate(x0, x1, y0, y1, mode)
+                gosim = self.interviolate(x0, x1, y0, y1, mode)
 
             self.linecounter += 1
 

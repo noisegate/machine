@@ -119,13 +119,14 @@ class Myinterface(interface.Interface):
                     [16, LEFTCOLUMN, "l)      load file"],
                     [17, LEFTCOLUMN, "c)      calibrate"],
                     [18, LEFTCOLUMN, "<space> pause/play"],
-                    [19, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt"],
+                    [19, LEFTCOLUMN, "i,j,k,m up/dn/lt/rt, u,o,n,,diag"],
                     [20, LEFTCOLUMN, "a,w,s,z move graph"],
                     [21, LEFTCOLUMN, "+, -, zoom graph"],
                     [22, LEFTCOLUMN, "Q) quit closing machine"],
                     [23, LEFTCOLUMN, "e) enablei motor"],
                     [24, LEFTCOLUMN, "d) disable motor"],
-                    [25, LEFTCOLUMN, "f,F slowdown, speedup"]
+                    [25, LEFTCOLUMN, "f,F slowdown, speedup"],
+                    [26, LEFTCOLUMN, "g go to gcode line"]
                 ]
 
 
@@ -135,8 +136,9 @@ class Myinterface(interface.Interface):
         self.parser = gcode.Parse()
         self.sim = Mysim(self.surf, self)
         interface.Interface.__init__(self)
-        self.gcodewin = curses.newwin(10,60,10,5*self.LEFTCOLUMN)
+        self.gcodewin = curses.newwin(35,60,10,5*self.LEFTCOLUMN)
         self.filewin = curses.newwin(10,60,40,self.LEFTCOLUMN)
+        self.statewin = curses.newwin(3, 20, 5, 5*self.LEFTCOLUMN)
 
     def pause(self):
         go = 1
@@ -174,7 +176,9 @@ class Myinterface(interface.Interface):
         if (self.sim.geometries is None):
             return
         self.sim.draw()
+        self.statewin.addstr(0,0,"SIM")
         self.sim.sim(mode)
+        self.statewin.addstr(0,0,"        ")
 
     def showgcode(self, gcodestring):
         self.gcodewin.addstr(0,0, gcodestring)
@@ -231,14 +235,14 @@ class Myinterface(interface.Interface):
         elif (arg==ord('d')):
             self.screen.addstr(3,3,"motor disabled")
             self.sim.xydriver.disable()
-        elif (arg==ord('i')):
-            self.decrementy(5)
-        elif (arg==ord('m')):
-            self.incrementy(5)
-        elif (arg==ord('j')):
-            self.decrementx(5)
-        elif (arg==ord('k')):
-            self.incrementx(5)
+        elif (arg==ord('I')):
+            self.decrementy(1)
+        elif (arg==ord('M')):
+            self.incrementy(1)
+        elif (arg==ord('J')):
+            self.decrementx(1)
+        elif (arg==ord('K')):
+            self.incrementx(1)
         elif (arg==ord('f')):
             self.sim.sleepx +=0.0001
             self.sim.sleepy +=0.0001
@@ -253,22 +257,22 @@ class Myinterface(interface.Interface):
                 self.sim.sleepx=0.0001
             if (self.sim.sleepy<0.0001):
                 self.sim.sleepy=0.0001
-        elif (arg==ord('I')):
+        elif (arg==ord('i')):
             self.decrementy(300)
-        elif (arg==ord('M')):
+        elif (arg==ord('m')):
             self.incrementy(300)
-        elif (arg==ord('J')):
+        elif (arg==ord('j')):
             self.decrementx(300)
-        elif (arg==ord('K')):
+        elif (arg==ord('k')):
             self.incrementx(300)
-        elif (arg==ord('U')):
-            self.sim.movexyz(-300,-300,0,0,0)
-        elif (arg==ord('O')):
-            self.sim.movexyz(300,-300,0,0,0)
-        elif (arg==ord(',')):
-            self.sim.movexyz(300,300,0,0,0)
-        elif (arg==ord('N')):
+        elif (arg==ord('u')):
             self.sim.movexyz(-300,300,0,0,0)
+        elif (arg==ord('o')):
+            self.sim.movexyz(300,300,0,0,0)
+        elif (arg==ord(',')):
+            self.sim.movexyz(300,-300,0,0,0)
+        elif (arg==ord('n')):
+            self.sim.movexyz(-300,-300,0,0,0)
         elif (arg==ord('<')):
             self.sim.linecounter-=2
             go=-1
@@ -279,7 +283,26 @@ class Myinterface(interface.Interface):
             self.sim.forward=True
         elif (arg==ord('Q')):
             os.system('sudo shutdown -h now')
-            
+        elif (arg==ord('g')):
+            #goto line...
+            x0=self.sim.currentx0
+            y0=self.sim.currenty0
+            curses.echo()
+            curses.nocbreak()
+            self.screen.addstr(1,1,"line nr: ")
+            self.screen.nodelay(0)
+            self.screen.refresh()
+            goline = self.screen.getstr(1,10,10)
+            curses.noecho()
+            curses.cbreak()
+            self.screen.nodelay(1)
+            geo = self.sim.geometries.geometries[int(goline)]
+            X0 = geo.point1
+            x1=int(X0.x*self.sim.SCALE)
+            y1=int(X0.y*self.sim.SCALE)
+            self.sim.interviolate(x0,x1,y0,y1,1)
+            self.sim.linecounter = int(goline)
+            self.sim.sim(1)
         return go
 
     def resetorigin(self):
