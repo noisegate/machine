@@ -215,7 +215,7 @@ class Simulator(object):
         pass
 
     def interviolate(self, x0, x1, y0, y1, mode):
-        self.state = "Interviolating "
+        #self.state = "Interviolating "
         #Bressenhemzzz
         dx = abs(x1-x0)
         if (x0<x1): 

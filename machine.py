@@ -177,7 +177,6 @@ class Myinterface(interface.Interface):
         if (self.sim.geometries is None):
             return
         self.sim.draw()
-        self.statewin.addstr(0,0,"SIM")
         self.sim.sim(mode)
         self.statewin.addstr(0,0,"        ")
 
@@ -206,7 +205,7 @@ class Myinterface(interface.Interface):
         return returnstring
 
     def loopinit(self):
-        self.sim.state="POLL     "
+        self.sim.state="POLL              "
         
     def generichandler(self, arg):
 
@@ -303,6 +302,7 @@ class Myinterface(interface.Interface):
             os.system('sudo shutdown -h now')
         elif (arg==ord('g')):
             #goto line...
+            self.sim.state = "goto line"
             x0=self.sim.currentx0
             y0=self.sim.currenty0
             goline = self.raw_input(1,1,"line nr: ")
@@ -345,12 +345,8 @@ class Myinterface(interface.Interface):
 
         self.filewin.refresh()
     
-        go=1
-        while(go):
-            c=self.screen.getch()
-            if c>-1:
-                    self.parser.filename = files[c-49]
-                    go=0
+        retnr = self.raw_input(1,1,"filenr: ")
+        self.parser.filename = files[int(retnr)-1]
         
         self.parser.parse()
         self.sim.geometries = self.parser.geometries
