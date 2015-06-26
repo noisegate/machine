@@ -89,6 +89,11 @@ class Interface(object):
     def handlerestkeypresses(self,c ):
         pass
 
+
+    def loopinit(self):
+        pass
+
+
     def loop(self):
         go=1
         self.draw()
@@ -97,6 +102,8 @@ class Interface(object):
         y=0
         direction='NONE'
 
+        self.loopinit()
+
         while(go):
             c = self.screen.getch()
             """
@@ -104,7 +111,7 @@ class Interface(object):
             self.graphics.update()
             """
             self.updatedata(direction, x, y)
-        
+            self.loopinit() 
             go = self.generichandler(c)
             self.handlerestkeypresses(c)
             time.sleep(0.02)

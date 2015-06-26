@@ -63,7 +63,8 @@ class Mysim(gcode.Simulator):
         gcode.Point.scale = params.scale
         self.aanslagy=0
         self.aanslagx=0
-        
+
+
         if (POLOLU_AVAILABLE):
             self.xydriver = pololu.Pololu(
                                             pololu.Pins(
@@ -193,10 +194,27 @@ class Myinterface(interface.Interface):
                             "CURR CRD: x = {0:<4}  y = {1:<4} step delay = {2:<5}".format(x,y,self.sim.sleepx,self.sim.sleepy))
         self.screen.refresh()
 
+    def raw_input(self, y, x, question):
+        self.screen.nodelay(0)
+        curses.echo()
+        self.screen.addstr(y,x,question)
+        returnstring =  self.screen.getstr(y,x+len(question),20)
+        self.screen.nodelay(1)
+        curses.noecho()
+        self.screen.addstr(y,x,"                                ")
+        self.screen.refresh()
+        return returnstring
+
+    def loopinit(self):
+        self.sim.state="POLL     "
+        
     def generichandler(self, arg):
 
         go=1
-       
+      
+        self.statewin.addstr(1,1,self.sim.state)
+        self.statewin.refresh()
+
         if (arg==-1):
             return go
         elif (arg==ord('q')):
@@ -287,22 +305,18 @@ class Myinterface(interface.Interface):
             #goto line...
             x0=self.sim.currentx0
             y0=self.sim.currenty0
-            curses.echo()
-            curses.nocbreak()
-            self.screen.addstr(1,1,"line nr: ")
-            self.screen.nodelay(0)
-            self.screen.refresh()
-            goline = self.screen.getstr(1,10,10)
-            curses.noecho()
-            curses.cbreak()
-            self.screen.nodelay(1)
+            goline = self.raw_input(1,1,"line nr: ")
             geo = self.sim.geometries.geometries[int(goline)]
             X0 = geo.point1
             x1=int(X0.x*self.sim.SCALE)
             y1=int(X0.y*self.sim.SCALE)
-            self.sim.interviolate(x0,x1,y0,y1,1)
+            self.sim.interviolate(x0, x1, y0, y1, 1)
             self.sim.linecounter = int(goline)
-            self.sim.sim(1)
+            q = self.raw_input(2,1,"continue or stop (c/s):ENTER ")
+            if (q=="c"):
+                self.sim.sim(1)
+            else:
+                return 1#make sure no recursions occur or so
         return go
 
     def resetorigin(self):

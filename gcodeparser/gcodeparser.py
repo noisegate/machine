@@ -145,6 +145,8 @@ class Simulator(object):
         self.currenty0=0
         self.currenty1=0
 
+        self.state = "POLL"
+
     def redraw(self):
         self.surf.clear()
         self.surf.pixelstyle.color = fb.Color(250,250,250,0)
@@ -213,6 +215,7 @@ class Simulator(object):
         pass
 
     def interviolate(self, x0, x1, y0, y1, mode):
+        self.state = "Interviolating "
         #Bressenhemzzz
         dx = abs(x1-x0)
         if (x0<x1): 
@@ -273,8 +276,11 @@ class Simulator(object):
         #self.linecounter = 0
         maxlines = len(self.geometries.geometries)
 
+        self.state = "x cuting gcode"
+
         while((gosim==1) and (self.linecounter<maxlines)):
         #for geometry in self.geometries.geometries :
+            
             geometry = self.geometries.geometries[self.linecounter]
             if isinstance(geometry, Line):
                 #self.surf.line(self.trafo(geometry.point1), self.trafo(geometry.point2))
