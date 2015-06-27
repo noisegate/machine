@@ -301,6 +301,11 @@ class Myinterface(interface.Interface):
             self.sim.forward=True
         elif (arg==ord('Q')):
             os.system('sudo shutdown -h now')
+        elif (arg==ord('!')):
+            #goto line without interp
+            goline = self.raw_input(1,1,"line nr: ")
+            self.sim.linecounter = int(goline)
+            self.sim.sim(1)
         elif (arg==ord('g')):
             #goto line...
             self.sim.state = "goto line"
