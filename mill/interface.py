@@ -110,7 +110,7 @@ class Interface(object):
             self.graphics.point((0.5+controller.xcoord/1000.0, 1.0-0.5+controller.ycoord/1000.0))
             self.graphics.update()
             """
-            self.updatedata(direction, x, y)
+            #self.updatedata()
             self.loopinit() 
             go = self.generichandler(c)
             self.handlerestkeypresses(c)

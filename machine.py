@@ -140,6 +140,7 @@ class Myinterface(interface.Interface):
         self.gcodewin = curses.newwin(35,60,10,5*self.LEFTCOLUMN)
         self.filewin = curses.newwin(10,60,40,self.LEFTCOLUMN)
         self.statewin = curses.newwin(3, 20, 5, 5*self.LEFTCOLUMN)
+        self.crdwin = curses.newwin(1, 80, int(0.9*self.height), self.LEFTCOLUMN)
 
     def pause(self):
         go = 1
@@ -184,14 +185,13 @@ class Myinterface(interface.Interface):
         self.gcodewin.addstr(0,0, gcodestring)
         self.gcodewin.refresh()
 
-    def updatedata(self, direction, x, y):
-        self.screen.addstr( int(0.9*self.height),
-                            self.LEFTCOLUMN, 
-                            "MANUAL CTRL: {0:<10}".format(direction))
-        self.screen.addstr( int(0.9*self.height)+1,
-                            self.LEFTCOLUMN, 
-                            "CURR CRD: x = {0:<4}  y = {1:<4} step delay = {2:<5}".format(x,y,self.sim.sleepx,self.sim.sleepy))
-        self.screen.refresh()
+    def updatedata(self):
+        self.crdwin.addstr( 0, 0,
+                            "CURR CRD: x0 = {0:<4}  y0 = {1:<4} x1 = {2:<4} y1 = {3:<4}".format( self.sim.currentx0,
+                                                                                     self.sim.currenty0,
+                                                                                     self.sim.currentx1,
+                                                                                     self.sim.currenty1))
+        self.crdwin.refresh()
 
     def raw_input(self, y, x, question):
         self.screen.nodelay(0)
@@ -213,6 +213,7 @@ class Myinterface(interface.Interface):
       
         self.statewin.addstr(1,1,self.sim.state)
         self.statewin.refresh()
+        self.updatedata()
 
         if (arg==-1):
             return go

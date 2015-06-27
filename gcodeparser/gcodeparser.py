@@ -225,12 +225,12 @@ class Simulator(object):
         dy = abs(y1-y0)
         if (y0<y1): 
             sy = 1
-        else: 
-            sy = -1
+        else:
+            sy=-1
         if (dx>dy): 
-            err = int(dx/2)
+            err = int(dx/2.0)
         else: 
-            err = int(-dy/2)
+            err = int(-dy/2.0)
 
         go=1
 
@@ -242,8 +242,8 @@ class Simulator(object):
             #go=0
             deltax = 0
             deltay = 0
-            if (x0==x1 and y1==y0): 
-                go=0
+            if (x0==x1 and y1==y0):
+                return gosim#go=0
             e2 = err
             if (e2 > -dx):
                 err -= dy
@@ -259,7 +259,9 @@ class Simulator(object):
             self.surf.update()
             self.currentx0 = x0
             self.currenty0 = y0
-           
+            self.currentx1 = x1
+            self.currenty1 = y1
+
             gosim = self.pause()
 
             if (gosim==0):
@@ -276,7 +278,7 @@ class Simulator(object):
         #self.linecounter = 0
         maxlines = len(self.geometries.geometries)
 
-        self.state = "x cuting gcode"
+        self.state = "Executing gcode"
 
         while((gosim==1) and (self.linecounter<maxlines)):
         #for geometry in self.geometries.geometries :
@@ -317,10 +319,12 @@ class Simulator(object):
                              )            
     
                 #bressenham's
-                gosim = self.interviolate(x0, x1, y0, y1, mode)
+                if ((x0 == x1) and (y0==y1)):
+                    pass
+                else:
+                    gosim = self.interviolate(x0, x1, y0, y1, mode)
 
             self.linecounter += 1
-
         self.simfinished()
 
 class Parse(object):
