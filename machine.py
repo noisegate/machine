@@ -78,7 +78,7 @@ class Mysim(gcode.Simulator):
                                             
                                            )
             self.xydriver.disable()
-            self.xydriver.speed=220
+            self.xydriver.speed=400
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -98,7 +98,7 @@ class Mysim(gcode.Simulator):
 
     def pause(self):
         #time.sleep(self.sleepx)
-        time.sleep(self.xydriver.stepdelay)
+        #time.sleep(self.xydriver.stepdelay)
         return self.interfaceself.ifpause()
 
     def talkback(self, talk):
@@ -146,7 +146,7 @@ class Myinterface(interface.Interface):
         go = 1
         while (go):
             c=self.screen.getch()
-            self.generichandler(c)
+            go=self.generichandler(c)
             if (c==ord(' ')): 
                 go=0
             #if (c==ord('q')):
