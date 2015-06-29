@@ -1,0 +1,111 @@
+;PYCAM-META-DATA: Filename: /home/marcell/Dropbox/3dtest/usbdac/top.dxf
+;PYCAM-META-DATA: Timestamp: 2015-06-29 14:26:07.380529
+;PYCAM-META-DATA: Version: 0.5.1
+;Estimated machine time: 4 minutes
+G40 (disable tool radius compensation)
+G49 (disable tool length compensation)
+G80 (cancel modal motion)
+G54 (select coordinate system 1)
+G90 (disable incremental moves)
+G21 (metric)
+G61 (exact path mode)
+F200.00000
+S1000.00000
+;PYCAM_TOOLPATH_SETTINGS: START
+;[Bounds]
+;maxz = 0.0
+;maxx = 98.5
+;maxy = 82.0
+;minx = -8.5
+;miny = -7.0
+;minz = 0.0
+;
+;[Tool]
+;torus_radius = 0.25
+;speed = 1000.0
+;shape = SphericalCutter
+;tool_radius = 0.5
+;feedrate = 200.0
+;
+;[Process]
+;engrave_offset = 1.0
+;step_down = 1.0
+;generator = EngraveCutter
+;postprocessor = SimpleCutter
+;milling_style = conventional
+;material_allowance = 0.0
+;pocketing_type = none
+;path_direction = x
+;
+;PYCAM_TOOLPATH_SETTINGS: END
+T3 M6
+G0 Z25.0000
+M3 (start spindle)
+G04 P3 (wait for 3 seconds)
+ X6.3773 Y5.5555
+G1 Z0.0000
+ X5.2547 Y7.5000
+ X6.3773 Y9.4445
+ X8.6226
+ X9.7453 Y7.5000
+ X8.6226 Y5.5555
+ X6.3773
+G0 Z25.0000
+ Y65.5555
+G1 Z0.0000
+ X5.2547 Y67.5000
+ X6.3773 Y69.4445
+ X8.6226
+ X9.7453 Y67.5000
+ X8.6226 Y65.5555
+ X6.3773
+G0 Z25.0000
+ X81.8774 Y66.0555
+G1 Z0.0000
+ X80.7547 Y68.0000
+ X81.8774 Y69.9445
+ X84.1226
+ X85.2453 Y68.0000
+ X84.1226 Y66.0555
+ X81.8774
+G0 Z25.0000
+ Y5.0555
+G1 Z0.0000
+ X80.7547 Y7.0000
+ X81.8773 Y8.9445
+ X84.1227
+ X85.2453 Y7.0000
+ X84.1226 Y5.0555
+ X81.8774
+G0 Z25.0000
+ X30.4142 Y4.0000
+G1 Z0.0000
+ X59.5858
+ X64.5858 Y-1.0000
+ X85.4142
+ X91.0000 Y4.5858
+ Y10.4142
+ X86.0000 Y15.4142
+ Y59.5858
+ X91.0000 Y64.5858
+ Y70.4142
+ X85.4142 Y76.0000
+ X64.5858
+ X59.5858 Y71.0000
+ X30.4142
+ X25.4142 Y76.0000
+ X4.5858
+ X-1.0000 Y70.4142
+ Y64.5858
+ X4.0000 Y59.5858
+ Y15.4142
+ X-1.0000 Y10.4142
+ Y4.5858
+ X4.5858 Y-1.0000
+ X25.4142
+ X30.4142 Y4.0000
+G0 Z25.0000
+M5 (stop spindle)
+G04 P3 (wait for 3 seconds)
+G0 Z25.0000
+M2 (end program)

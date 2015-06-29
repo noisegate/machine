@@ -104,7 +104,8 @@ class Mysim(gcode.Simulator):
     def talkback(self, talk):
         self.interfaceself.showgcode(talk)
 
-    def movexyz(self, dx, dy, x, y, mode):
+    def movexyz(self, dx, dy, x, y, mode, rampup):
+        self.xydriver.speed = 1+int(400.0 * rampup)
         self.xydriver.steps([-dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
@@ -163,16 +164,16 @@ class Myinterface(interface.Interface):
         pass
 
     def decrementx(self, n):
-        self.sim.movexyz(-n,0,0,0,0)       
+        self.sim.movexyz(-n,0,0,0,0,1)       
 
     def decrementy(self,n):
-        self.sim.movexyz(0, n, 0 , 0, 0)
+        self.sim.movexyz(0, n, 0 , 0, 0,1)
 
     def incrementx(self,n):
-        self.sim.movexyz(n, 0, 0, 0, 0)
+        self.sim.movexyz(n, 0, 0, 0, 0,1)
 
     def incrementy(self,n):
-        self.sim.movexyz(0,-n, 0, 0, 0)
+        self.sim.movexyz(0,-n, 0, 0, 0,1)
 
     def dowhateverSis(self, mode):
         if (self.sim.geometries is None):
@@ -284,13 +285,13 @@ class Myinterface(interface.Interface):
         elif (arg==ord('k')):
             self.incrementx(300)
         elif (arg==ord('u')):
-            self.sim.movexyz(-300,300,0,0,0)
+            self.sim.movexyz(-300,300,0,0,0, 1)
         elif (arg==ord('o')):
-            self.sim.movexyz(300,300,0,0,0)
+            self.sim.movexyz,(300,300,0,0,0,1)
         elif (arg==ord(',')):
-            self.sim.movexyz(300,-300,0,0,0)
+            self.sim.movexyz(300,-300,0,0,0,1)
         elif (arg==ord('n')):
-            self.sim.movexyz(-300,-300,0,0,0)
+            self.sim.movexyz(-300,-300,0,0,0,1)
         elif (arg==ord('<')):
             self.sim.linecounter-=2
             go=-1

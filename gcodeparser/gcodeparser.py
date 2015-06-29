@@ -210,7 +210,7 @@ class Simulator(object):
     def movey(self, dy, y, mode):
         pass
 
-    def movexyz(self, dx, dy, x, y, mode):
+    def movexyz(self, dx, dy, x, y, mode, rampup):
         #moves simultaneously (45 degs and 90)
         pass
 
@@ -233,6 +233,8 @@ class Simulator(object):
             err = int(-dy/2.0)
 
         go=1
+    
+        rampup = 1.0
 
         while(go):
             self.surf.point(
@@ -254,7 +256,9 @@ class Simulator(object):
                 y0 += sy
                 deltay=sy
 
-            self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode)
+            self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode, 1.0-rampup)
+
+            rampup *=0.1
 
             self.surf.update()
             self.currentx0 = x0
