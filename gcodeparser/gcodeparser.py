@@ -335,7 +335,10 @@ class Simulator(object):
                 else:
                     gosim = self.interviolate(x0, x1, y0, y1, mode)
             gosim = self.pause()   
-            self.surf.line((x0/self.SCALE,y0/self.SCALE),(x1/self.SCALE,y1/self.SCALE))
+            self.surf.line(
+                           (self.trafox(x0/self.SCALE),-self.trafoy(y0/self.SCALE)),
+                           (self.trafox(x1/self.SCALE),-self.trafoy(y1/self.SCALE))
+                           )
             self.surf.update()
             self.linecounter += 1
         self.simfinished()

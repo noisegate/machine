@@ -106,7 +106,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.showgcode(talk)
 
     def movexyz(self, dx, dy, x, y, mode, rampup):
-        self.xydriver.speed = 100.0+250.0 * rampup
+        self.xydriver.speed = 100.0+200.0 * rampup
         self.xydriver.steps([-dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
