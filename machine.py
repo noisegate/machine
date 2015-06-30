@@ -1,5 +1,6 @@
 import glob
 import fbpy.fb as fb
+from math import *
 import time
 import gcodeparser.gcodeparser as gcode
 import mill.interface as interface
@@ -78,7 +79,7 @@ class Mysim(gcode.Simulator):
                                             
                                            )
             self.xydriver.disable()
-            self.xydriver.speed=400
+            self.xydriver.speed=300
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -105,7 +106,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.showgcode(talk)
 
     def movexyz(self, dx, dy, x, y, mode, rampup):
-        self.xydriver.speed = 1+int(400.0 * rampup)
+        self.xydriver.speed = 100.0+250.0 * rampup
         self.xydriver.steps([-dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
@@ -163,8 +164,9 @@ class Myinterface(interface.Interface):
     def resetorigin(self):
         pass
 
+
     def decrementx(self, n):
-        self.sim.movexyz(-n,0,0,0,0,1)       
+        self.sim.movexyz(-n, 0, 0 , 0, 0,1)
 
     def decrementy(self,n):
         self.sim.movexyz(0, n, 0 , 0, 0,1)

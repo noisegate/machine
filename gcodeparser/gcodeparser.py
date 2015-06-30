@@ -234,16 +234,24 @@ class Simulator(object):
 
         go=1
     
-        rampup = 1.0
+
+        xi = x0
+        yi = y0
 
         while(go):
-            self.surf.point(
-                            (self.trafox(x0/self.SCALE), 
-                            -self.trafoy(y0/self.SCALE))
-                           )
+            #self.surf.point(
+            #                (self.trafox(x0/self.SCALE), 
+            #                -self.trafoy(y0/self.SCALE))
+            #               )
             #go=0
             deltax = 0
             deltay = 0
+
+            r1 = sqrt((xi-x0)**2 + (yi-y0)**2)
+            r2 = sqrt((x1-x0)**2 + (y1-y0)**2)
+
+            curve = (1.0 - exp(-r1/25)) * (1.0 - exp(-r2/25))
+
             if (x0==x1 and y1==y0):
                 return gosim#go=0
             e2 = err
@@ -256,24 +264,23 @@ class Simulator(object):
                 y0 += sy
                 deltay=sy
 
-            self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode, 1.0-rampup)
-
-            rampup *=0.1
-
-            self.surf.update()
+            self.movexyz(deltax, deltay, x0/self.SCALE, y0/self.SCALE, mode, curve)
+            #time.sleep(0.011)
+            #self.surf.update()
             self.currentx0 = x0
             self.currenty0 = y0
             self.currentx1 = x1
             self.currenty1 = y1
 
-            gosim = self.pause()
-
+            #gosim = self.pause()
+            gosim=1
             if (gosim==0):
                 go=0
             if (gosim==-1):
                 go=0
                 gosim=1
-
+        
+        gosim = self.pause()
         return gosim
 
     def sim(self, mode):
@@ -327,7 +334,9 @@ class Simulator(object):
                     pass
                 else:
                     gosim = self.interviolate(x0, x1, y0, y1, mode)
-
+            gosim = self.pause()   
+            self.surf.line((x0/self.SCALE,y0/self.SCALE),(x1/self.SCALE,y1/self.SCALE))
+            self.surf.update()
             self.linecounter += 1
         self.simfinished()
 
