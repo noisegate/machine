@@ -144,7 +144,7 @@ class Simulator(object):
         self.currentx1=0
         self.currenty0=0
         self.currenty1=0
-
+        self.tictoc = 0
         self.state = "POLL"
 
     def redraw(self):
@@ -239,6 +239,10 @@ class Simulator(object):
         yi = y0
 
         while(go):
+            if (x0==x1 and y1==y0):
+                self.tictoc = t1-t0
+                return gosim#go=0
+            t0 = time.time()
             #self.surf.point(
             #                (self.trafox(x0/self.SCALE), 
             #                -self.trafoy(y0/self.SCALE))
@@ -252,8 +256,6 @@ class Simulator(object):
 
             curve = (1.0 - exp(-r1/25)) * (1.0 - exp(-r2/25))
 
-            if (x0==x1 and y1==y0):
-                return gosim#go=0
             e2 = err
             if (e2 > -dx):
                 err -= dy
@@ -279,8 +281,10 @@ class Simulator(object):
             if (gosim==-1):
                 go=0
                 gosim=1
-        
+            t1 = time.time()
+
         gosim = self.pause()
+        self.tictoc = t1-t0
         return gosim
 
     def sim(self, mode):
@@ -334,6 +338,7 @@ class Simulator(object):
                     pass
                 else:
                     gosim = self.interviolate(x0, x1, y0, y1, mode)
+
             gosim = self.pause()   
             self.surf.line(
                            (self.trafox(x0/self.SCALE),-self.trafoy(y0/self.SCALE)),

@@ -8,6 +8,7 @@ import curses
 import curses.textpad
 import os
 import data
+import timeit
 try:
     import pololu.dipololu as pololu
     POLOLU_AVAILABLE = True
@@ -79,7 +80,7 @@ class Mysim(gcode.Simulator):
                                             
                                            )
             self.xydriver.disable()
-            self.xydriver.speed=300
+            self.xydriver.speed=280
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
@@ -106,7 +107,7 @@ class Mysim(gcode.Simulator):
         self.interfaceself.showgcode(talk)
 
     def movexyz(self, dx, dy, x, y, mode, rampup):
-        self.xydriver.speed = 100.0+200.0 * rampup
+        self.xydriver.speed = 100.0+180.0 * rampup
         self.xydriver.steps([-dx*self.stepspermmX, dy*self.stepspermmY])
 
 class Myinterface(interface.Interface):
@@ -141,7 +142,7 @@ class Myinterface(interface.Interface):
         interface.Interface.__init__(self)
         self.gcodewin = curses.newwin(35,60,10,5*self.LEFTCOLUMN)
         self.filewin = curses.newwin(10,60,40,self.LEFTCOLUMN)
-        self.statewin = curses.newwin(3, 20, 5, 5*self.LEFTCOLUMN)
+        self.statewin = curses.newwin(3, 60, 5, 5*self.LEFTCOLUMN)
         self.crdwin = curses.newwin(1, 80, int(0.9*self.height), self.LEFTCOLUMN)
 
     def pause(self):
@@ -215,6 +216,8 @@ class Myinterface(interface.Interface):
         go=1
       
         self.statewin.addstr(1,1,self.sim.state)
+        s ="d bressnham:time {0}, delay {1}".format(self.sim.tictoc, self.sim.xydriver.stepdelay)
+        self.statewin.addstr(2,1,s)
         self.statewin.refresh()
         self.updatedata()
 
