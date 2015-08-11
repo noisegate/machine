@@ -130,7 +130,8 @@ class Myinterface(interface.Interface):
                     [23, LEFTCOLUMN, "e) enablei motor"],
                     [24, LEFTCOLUMN, "d) disable motor"],
                     [25, LEFTCOLUMN, "f,F slowdown, speedup"],
-                    [26, LEFTCOLUMN, "g go to gcode line"]
+                    [26, LEFTCOLUMN, "g go to gcode line and move"],
+                    [27, LEFTCOLUMN, "! go to gcode line, no move"]
                 ]
 
 
