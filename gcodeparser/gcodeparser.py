@@ -362,6 +362,7 @@ class Parse(object):
           except IOError, (errno, strerror):
                error_dialog("Unable to open the file" + gcodes.name + "\n",1)
           else:
+
                self.geometries = Geometries()
                pre_x = 0.0
                pre_y = 0.0
@@ -378,6 +379,8 @@ class Parse(object):
                     if not gcode:
                          break
                     flag = 0
+                    #remove shit between parentheses (comments)
+                    gcode = re.sub(r'\([^)]*\)', '', gcode)
                     #parse g code
                     if (gcode[0]==';'):
                          gg=None
@@ -405,7 +408,7 @@ class Parse(object):
                     if (ss):
                          s = float(ss.group(1))
                          #print "s: {0}".format(s)
-                    if(style == 1 or style == 0):
+                    if(style == 1 or style == 0 or style == 4):
                          #lines
                          if(flag):
                               point1 = Point(pre_x,pre_y,pre_z)

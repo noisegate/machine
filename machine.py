@@ -34,6 +34,23 @@ class Dummypololu(object):
     def stepsright(self,y):
         pass
 
+class Dummtpololu2(object):
+
+    stepdelay=0
+    speed = 0
+
+    def __init__(self):
+        pass
+
+    def enable(self):
+        pass
+
+    def disable(self):
+        pass
+
+    def steps(self,somelist):
+        pass
+
 class Simpololu(object):
 
     def __init__(self):
@@ -84,6 +101,7 @@ class Mysim(gcode.Simulator):
         else:
             self.ydriver = Dummypololu()
             self.xdriver = Dummypololu()
+            self.xydriver = Dummtpololu2()
         self.simxdriver = Simpololu()
         self.simydriver = Simpololu()
 
