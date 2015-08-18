@@ -380,6 +380,7 @@ class Parse(object):
                          break
                     flag = 0
                     #remove shit between parentheses (comments)
+                    #http://stackoverflow.com/questions/640001/how-can-i-remove-text-within-parentheses-with-a-regex
                     gcode = re.sub(r'\([^)]*\)', '', gcode)
                     #parse g code
                     if (gcode[0]==';'):
