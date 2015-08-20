@@ -165,7 +165,7 @@ class Simulator(object):
         return self.zoom*x/self.geometries.xtent/2+self.offsetx
 
     def trafoy(self, x):
-        return self.zoom*x/self.geometries.xtent/2+self.offsety
+        return self.zoom*x/self.geometries.ytent/2+self.offsety
 
     def draw(self):
         self.redraw()
