@@ -18,6 +18,8 @@ types and a microchip IO expander (for joystick and rotary encoder controll).
 
 work in progress...
 
+[show in action](https://youtu.be/xkdd47lEmRM).
+
 ## dependencies
 
 download and install the following packages:
